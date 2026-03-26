@@ -1,4 +1,4 @@
-package com.totalcross.ui;
+package com.totalcross.ui.button;
 
 
 import totalcross.ui.Button;

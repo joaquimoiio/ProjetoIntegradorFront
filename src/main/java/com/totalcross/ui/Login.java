@@ -1,5 +1,7 @@
 package com.totalcross.ui;
 
+import com.totalcross.ui.button.BasicButton;
+
 import totalcross.ui.Container;
 import totalcross.ui.Edit;
 import totalcross.ui.Label;

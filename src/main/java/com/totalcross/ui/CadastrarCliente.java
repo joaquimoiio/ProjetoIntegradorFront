@@ -1,9 +1,12 @@
 package com.totalcross.ui;
 
+import com.totalcross.ui.button.MethodButton;
+
 import totalcross.ui.ComboBox;
 import totalcross.ui.Container;
 import totalcross.ui.Edit;
 import totalcross.ui.Label;
+import totalcross.ui.MainWindow;
 import totalcross.ui.event.ControlEvent;
 import totalcross.ui.event.Event;
 import totalcross.ui.event.EventHandler;
@@ -13,6 +16,7 @@ public class CadastrarCliente extends Container {
 	private Edit nome, cpfCnpj, telefone, email;
 	private ComboBox tipoDePessoa;
 	private Label lblCpfCnpj;
+	private MethodButton btnVoltar;
 
 	String[] tipo = { "FISICA", "JURIDICA" };
 
@@ -21,41 +25,86 @@ public class CadastrarCliente extends Container {
 	}
 
 	public void initUI() {
-		nome();
+		Header header = new Header("Cadastro novo cliente");
+		add(header, LEFT, TOP);
 		tipoDePessoa();
+		nome();
 		cpfCnpj();
 		telefone();
 		email();
 		botaoCadastrar();
 	}
 
-	public void nome() {
-		Label lblNome = new Label("Digite seu nome");
-		add(lblNome, LEFT, AFTER + 15);
+	public int getLeft() {
+		return LEFT + 30;
+	}
 
-		nome = new Edit();
-		add(nome, LEFT, AFTER + 5, FILL, PREFERRED);
+	public int getFill() {
+		return FILL - 30;
+	}
+
+	public int getPreferredEdit() {
+		return PREFERRED - 20;
 	}
 
 	public void tipoDePessoa() {
 
 		Label lblTipo = new Label("Tipo de Pessoa");
-		add(lblTipo, LEFT, TOP + 20);
+		add(lblTipo, getLeft(), TOP + 65);
 
 		ComboBox.usePopupMenu = false;
 		tipoDePessoa = new ComboBox(tipo);
 		tipoDePessoa.caption = "Selecione seu tipo de Pessoa";
-		add(tipoDePessoa, LEFT, AFTER + 5, FILL, PREFERRED);
+		add(tipoDePessoa, getLeft(), AFTER + 5, getFill(), PREFERRED);
+	}
+
+	public void nome() {
+		Label lblNome = new Label("Digite seu nome");
+		add(lblNome, getLeft(), AFTER + 15);
+
+		nome = new Edit();
+		add(nome, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
 	}
 
 	public void cpfCnpj() {
 
-		lblCpfCnpj = new Label("Digite seu CPF    ");
-		add(lblCpfCnpj, LEFT, AFTER + 15);
+		lblCpfCnpj = new Label("Digite seu CPF");
+		add(lblCpfCnpj, getLeft(), AFTER + 15, FILL, getTamanhoCampo("Digite seu CNPJ"));
 
 		cpfCnpj = new Edit();
-		add(cpfCnpj, LEFT, AFTER + 5, FILL, PREFERRED);
+		add(cpfCnpj, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
+
 	}
+
+	public int getTamanhoCampo(String campo) {
+
+		return campo.length();
+
+	}
+
+
+	public void telefone() {
+		Label lblTelefone = new Label("Digite seu telefone");
+		add(lblTelefone, getLeft(), AFTER + 15);
+
+		telefone = new Edit();
+		add(telefone, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
+	}
+
+	public void email() {
+		Label lblEmail = new Label("Digite seu email");
+		add(lblEmail, getLeft(), AFTER + 15);
+
+		email = new Edit();
+		add(email, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
+	}
+
+	public void botaoCadastrar() {
+		MethodButton btnCadastrar = new MethodButton("Cadastrar");
+		add(btnCadastrar, RIGHT - 30, AFTER + 30, DP + 75, DP + 35);
+	}
+
+
 
 	@Override
 	public <H extends EventHandler> void onEvent(Event<H> event) {
@@ -71,34 +120,16 @@ public class CadastrarCliente extends Container {
 				repaintNow();
 			}
 			
-			
-			
+			if (event.target == btnVoltar) {
+				MenuPrincipal menuPrincipal = new MenuPrincipal();
+				MainWindow.getMainWindow().swap(menuPrincipal);
+			}
+
 			break;
 
 		default:
 			break;
 		}
-	}
-
-	public void telefone() {
-		Label lblTelefone = new Label("Digite seu telefone");
-		add(lblTelefone, LEFT, AFTER + 15);
-
-		telefone = new Edit();
-		add(telefone, LEFT, AFTER + 5, FILL, PREFERRED);
-	}
-
-	public void email() {
-		Label lblEmail = new Label("Digite seu email");
-		add(lblEmail, LEFT, AFTER + 15);
-
-		email = new Edit();
-		add(email, LEFT, AFTER + 5, FILL, PREFERRED);
-	}
-
-	public void botaoCadastrar() {
-		BasicButton btnCadastrar = new BasicButton("Cadastrar");
-		add(btnCadastrar, CENTER, AFTER + 30, DP + 150, DP + 60);
 	}
 
 }

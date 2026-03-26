@@ -1,4 +1,4 @@
-package com.totalcross.ui;
+package com.totalcross.ui.button;
 
 import totalcross.ui.Button;
 import totalcross.ui.MainWindow;
@@ -10,7 +10,7 @@ public class MethodButton extends Button {
 	public MethodButton(String msg) {
 		super(msg);
 		setBackForeColors(Color.getRGB(128, 128, 128), Color.BLACK);
-		Font font = MainWindow.getDefaultFont().percentBy(150);
+		Font font = MainWindow.getDefaultFont().percentBy(100);
 		setFont(font);
 	}
 

@@ -1,5 +1,7 @@
 package com.totalcross.ui;
 
+import com.totalcross.ui.button.MethodButton;
+
 import totalcross.ui.Container;
 import totalcross.ui.MainWindow;
 import totalcross.ui.event.ControlEvent;
@@ -8,10 +10,10 @@ import totalcross.ui.event.EventHandler;
 
 public class MenuPrincipal extends Container {
 
-	MethodButton cadastrarButton, buscarTodosButton, buscarPorIdButton, atualizarButton, deletarButton;
+	private MethodButton cadastrarButton, buscarTodosButton, buscarPorIdButton, atualizarButton, deletarButton;
 
-	private static int comprimento = 225;
-	private static int altura = 40;
+	private static int comprimento = 175;
+	private static int altura = 35;
 
 	public MenuPrincipal() {
 	}
@@ -55,9 +57,20 @@ public class MenuPrincipal extends Container {
 		switch (event.type) {
 		case ControlEvent.PRESSED:
 			if (event.target == cadastrarButton) {
-
 				CadastrarCliente cadastrarCliente = new CadastrarCliente();
 				MainWindow.getMainWindow().swap(cadastrarCliente);
+			} else if (event.target == buscarTodosButton) {
+				ListarTodosClientes listarTodosClientes = new ListarTodosClientes();
+				MainWindow.getMainWindow().swap(listarTodosClientes);
+			} else if (event.target == buscarPorIdButton) {
+				ListarCliente listarCliente = new ListarCliente();
+				MainWindow.getMainWindow().swap(listarCliente);
+			} else if (event.target == atualizarButton) {
+				AtualizarCliente atualizarCliente = new AtualizarCliente();
+				MainWindow.getMainWindow().swap(atualizarCliente);
+			} else if (event.target == deletarButton) {
+				DeletarCliente deletarCliente = new DeletarCliente();
+				MainWindow.getMainWindow().swap(deletarCliente);
 			}
 
 				break;
