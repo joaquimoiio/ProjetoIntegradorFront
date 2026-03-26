@@ -4,6 +4,7 @@ import com.totalcross.ui.button.MethodButton;
 
 import totalcross.ui.Container;
 import totalcross.ui.Label;
+import totalcross.ui.MainWindow;
 import totalcross.ui.event.ControlEvent;
 import totalcross.ui.event.Event;
 
@@ -13,21 +14,28 @@ public class Header extends Container {
 	private MethodButton btnVoltar;
 
 	public Header(String msg) {
-		setTitulo(msg);
+        this.titulo = msg;
 	}
 
-	@Override
 	public void initUI() {
-		montaTela();
+		botaoVoltar();
+        titulo(titulo);
 	}
 
-	private void montaTela() {
-		btnVoltar = new MethodButton("<");
-		add(btnVoltar, LEFT + 10, getTop(), DP + 50, DP + 25);
+    private int getTop(){
+        return TOP + 10;
+    }
 
-		Label lblTitulo = new Label(titulo);
-		add(lblTitulo, CENTER, getTop());
-	}
+
+    private void botaoVoltar() {
+        btnVoltar = new MethodButton("<");
+        add(btnVoltar, LEFT + 10, getTop(), DP + 50, DP + 25);
+    }
+
+    private void titulo(String titulo) {
+        Label lblTitulo = new Label(titulo);
+        add(lblTitulo, CENTER, getTop() + 5);
+    }
 	
 	@Override
 	public void onEvent(Event event) {
@@ -35,8 +43,9 @@ public class Header extends Container {
 		switch (event.type) {
 		case ControlEvent.PRESSED:
 			if (event.target == btnVoltar) {
+                MenuPrincipal menuPrincipal = new MenuPrincipal();
+                MainWindow.getMainWindow().swap(menuPrincipal);
 			}
-
 			break;
 
 		default:
@@ -44,16 +53,5 @@ public class Header extends Container {
 		}
 	}
 
-	public int getTop() {
-		return TOP + 10;
-	}
-
-	public String getTitulo() {
-		return titulo;
-	}
-
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
 
 }

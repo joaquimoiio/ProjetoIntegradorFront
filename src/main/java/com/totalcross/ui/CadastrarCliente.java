@@ -26,7 +26,7 @@ public class CadastrarCliente extends Container {
 
 	public void initUI() {
 		Header header = new Header("Cadastro novo cliente");
-		add(header, LEFT, TOP);
+		add(header, LEFT, TOP, FILL, DP + 40);
 		tipoDePessoa();
 		nome();
 		cpfCnpj();
@@ -49,12 +49,12 @@ public class CadastrarCliente extends Container {
 
 	public void tipoDePessoa() {
 
-		Label lblTipo = new Label("Tipo de Pessoa");
+		Label lblTipo = new Label("Selecione tipo de pessoa:");
 		add(lblTipo, getLeft(), TOP + 65);
 
 		ComboBox.usePopupMenu = false;
 		tipoDePessoa = new ComboBox(tipo);
-		tipoDePessoa.caption = "Selecione seu tipo de Pessoa";
+        tipoDePessoa.setSelectedIndex(0);
 		add(tipoDePessoa, getLeft(), AFTER + 5, getFill(), PREFERRED);
 	}
 
@@ -71,23 +71,24 @@ public class CadastrarCliente extends Container {
 		lblCpfCnpj = new Label("Digite seu CPF");
 		add(lblCpfCnpj, getLeft(), AFTER + 15, FILL, getTamanhoCampo("Digite seu CNPJ"));
 
-		cpfCnpj = new Edit();
+        cpfCnpj = new Edit("999.999.999-99");
+        cpfCnpj.setMaxLength(14);
+        cpfCnpj.setMode(Edit.NORMAL, true);
+        cpfCnpj.setKeyboard(Edit.KBD_NUMERIC);
 		add(cpfCnpj, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
 
 	}
 
 	public int getTamanhoCampo(String campo) {
-
 		return campo.length();
-
 	}
-
-
 	public void telefone() {
 		Label lblTelefone = new Label("Digite seu telefone");
 		add(lblTelefone, getLeft(), AFTER + 15);
 
-		telefone = new Edit();
+        telefone = new Edit("(99) 99999-9999");
+        telefone.setMaxLength(11);
+        telefone.setKeyboard(Edit.KBD_NUMERIC);
 		add(telefone, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
 	}
 
@@ -96,6 +97,7 @@ public class CadastrarCliente extends Container {
 		add(lblEmail, getLeft(), AFTER + 15);
 
 		email = new Edit();
+        email.setKeyboard(Edit.KBD_DEFAULT);
 		add(email, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
 	}
 
@@ -104,7 +106,9 @@ public class CadastrarCliente extends Container {
 		add(btnCadastrar, RIGHT - 30, AFTER + 30, DP + 75, DP + 35);
 	}
 
-
+    private boolean validarEmail(String texto) {
+        return texto.contains("@") && texto.contains(".");
+    }
 
 	@Override
 	public <H extends EventHandler> void onEvent(Event<H> event) {
@@ -112,17 +116,19 @@ public class CadastrarCliente extends Container {
 		switch (event.type) {
 		case ControlEvent.PRESSED:
 			if (event.target == tipoDePessoa) {
+                remove(cpfCnpj);
 				if (tipoDePessoa.getSelectedIndex() == 0) {
-					lblCpfCnpj.setText("Digite seu CPF");
+                    lblCpfCnpj.setText("Digite seu CPF");
+                    cpfCnpj = new Edit("999.999.999-99");
+                    cpfCnpj.setMaxLength(14);
 				} else {
-					lblCpfCnpj.setText("Digite seu CNPJ");
+                    lblCpfCnpj.setText("Digite seu CNPJ");
+                    cpfCnpj = new Edit("99.999.999/9999-99");
+                    cpfCnpj.setMaxLength(18);
 				}
-				repaintNow();
-			}
-			
-			if (event.target == btnVoltar) {
-				MenuPrincipal menuPrincipal = new MenuPrincipal();
-				MainWindow.getMainWindow().swap(menuPrincipal);
+                cpfCnpj.setKeyboard(Edit.KBD_NUMERIC);
+                add(cpfCnpj, getLeft(), AFTER + 5, getFill(), getPreferredEdit(), lblCpfCnpj);
+                repaintNow();
 			}
 
 			break;
