@@ -19,6 +19,8 @@ public class MenuPrincipal extends Container {
 	}
 
 	public void initUI() {
+        Header header = new Header("Logout","Menu Principal", new Login());
+        add(header, LEFT, TOP, FILL, DP + 45);
 		cadastrarCliente();
 		ListarTodosClientes();
 		ListarCliente();
@@ -28,13 +30,13 @@ public class MenuPrincipal extends Container {
 
 	public void cadastrarCliente() {
 		cadastrarButton = new MethodButton("Cadastrar Cliente");
-		add(cadastrarButton, CENTER, CENTER - 120, comprimento, altura);
+		add(cadastrarButton, CENTER, CENTER - 100, comprimento, altura);
 
 	}
 
 	public void ListarTodosClientes() {
 		buscarTodosButton = new MethodButton("Listar Todos Clientes");
-		add(buscarTodosButton, CENTER, CENTER - 60, comprimento, altura);
+		add(buscarTodosButton, CENTER, CENTER - 50, comprimento, altura);
 	}
 
 	public void ListarCliente() {
@@ -44,12 +46,12 @@ public class MenuPrincipal extends Container {
 
 	public void atualizarCliente() {
 		atualizarButton = new MethodButton("Atualizar Cliente");
-		add(atualizarButton, CENTER, CENTER + 60, comprimento, altura);
+		add(atualizarButton, CENTER, CENTER + 50, comprimento, altura);
 	}
 
 	public void deletarCliente() {
 		deletarButton = new MethodButton("Deletar Cliente");
-		add(deletarButton, CENTER, CENTER + 120, comprimento, altura);
+		add(deletarButton, CENTER, CENTER + 100, comprimento, altura);
 	}
 
 	@Override

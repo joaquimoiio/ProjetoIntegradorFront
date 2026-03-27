@@ -16,7 +16,6 @@ public class CadastrarCliente extends Container {
 	private Edit nome, cpfCnpj, telefone, email;
 	private ComboBox tipoDePessoa;
 	private Label lblCpfCnpj;
-	private MethodButton btnVoltar;
 
 	String[] tipo = { "FISICA", "JURIDICA" };
 
@@ -25,7 +24,7 @@ public class CadastrarCliente extends Container {
 	}
 
 	public void initUI() {
-		Header header = new Header("Cadastro novo cliente");
+        Header header = new Header("<","Cadastro novo cliente", new MenuPrincipal());
 		add(header, LEFT, TOP, FILL, DP + 40);
 		tipoDePessoa();
 		nome();

@@ -11,14 +11,20 @@ import totalcross.ui.event.Event;
 public class Header extends Container {
 
 	private String titulo;
+    private Container telaDestino;
+    private String botao;
+    private MainWindow mainWindow;
+    private MenuPrincipal menuPrincipal;
 	private MethodButton btnVoltar;
 
-	public Header(String msg) {
-        this.titulo = msg;
+	public Header(String botao, String titulo, Container telaDestino) {
+        this.botao = botao;
+        this.titulo = titulo;
+        this.telaDestino = telaDestino;
 	}
 
 	public void initUI() {
-		botaoVoltar();
+		botaoVoltar(botao);
         titulo(titulo);
 	}
 
@@ -27,8 +33,8 @@ public class Header extends Container {
     }
 
 
-    private void botaoVoltar() {
-        btnVoltar = new MethodButton("<");
+    private void botaoVoltar(String botao) {
+        btnVoltar = new MethodButton(botao);
         add(btnVoltar, LEFT + 10, getTop(), DP + 50, DP + 25);
     }
 
@@ -43,8 +49,7 @@ public class Header extends Container {
 		switch (event.type) {
 		case ControlEvent.PRESSED:
 			if (event.target == btnVoltar) {
-                MenuPrincipal menuPrincipal = new MenuPrincipal();
-                MainWindow.getMainWindow().swap(menuPrincipal);
+                MainWindow.getMainWindow().swap(telaDestino);
 			}
 			break;
 
