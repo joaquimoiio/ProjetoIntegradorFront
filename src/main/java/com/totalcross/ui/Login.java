@@ -1,6 +1,7 @@
 package com.totalcross.ui;
 
 import com.totalcross.ui.button.BasicButton;
+import com.totalcross.util.ErroBox;
 
 import totalcross.ui.Container;
 import totalcross.ui.Edit;
@@ -30,25 +31,37 @@ public class Login extends Container {
 		botaoLogin();
 	}
 
+	public int getLeft() {
+		return LEFT + 30;
+	}
+
+	public int getFill() {
+		return FILL - 30;
+	}
+
+	public int getPreferredEdit() {
+		return PREFERRED - 20;
+	}
+
 	private void login() {
 		Label lblLogin = new Label("Digite seu usuario");
-		add(lblLogin, LEFT, CENTER - 125);
+		add(lblLogin, getLeft(), CENTER - 125);
 
 		login = new Edit();
-		add(login, LEFT, AFTER + 5, FILL, PREFERRED);
+		add(login, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
 	}
 
 	private void senha() {
 		Label lblSenha = new Label("Digite sua senha");
-		add(lblSenha, LEFT, AFTER + 10);
+		add(lblSenha, getLeft(), AFTER + 10);
 
 		senha = new Edit();
-		add(senha, LEFT, AFTER + 5, FILL, PREFERRED);
+		add(senha, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
 	}
 
 	private void botaoLogin() {
 		btnLogin = new BasicButton("Login");
-		add(btnLogin, CENTER, AFTER + 20, DP + 100, DP + 70);
+		add(btnLogin, CENTER, AFTER + 20, DP + 100, DP + 60);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.totalcross.ui;
 
 import com.totalcross.ui.button.MethodButton;
+import com.totalcross.util.Header;
 
 import totalcross.ui.Container;
 import totalcross.ui.MainWindow;
@@ -10,10 +11,10 @@ import totalcross.ui.event.EventHandler;
 
 public class MenuPrincipal extends Container {
 
-	private MethodButton cadastrarButton, buscarTodosButton, buscarPorIdButton, atualizarButton, deletarButton;
+	private MethodButton cadastrarButton, buscarTodosButton, atualizarButton, deletarButton;
 
 	private static int comprimento = 175;
-	private static int altura = 35;
+	private static int altura = 40;
 
 	public MenuPrincipal() {
 	}
@@ -23,35 +24,29 @@ public class MenuPrincipal extends Container {
         add(header, LEFT, TOP, FILL, DP + 45);
 		cadastrarCliente();
 		ListarTodosClientes();
-		ListarCliente();
 		atualizarCliente();
 		deletarCliente();
 	}
 
 	public void cadastrarCliente() {
 		cadastrarButton = new MethodButton("Cadastrar Cliente");
-		add(cadastrarButton, CENTER, CENTER - 100, comprimento, altura);
+		add(cadastrarButton, CENTER, CENTER - 75, comprimento, altura);
 
 	}
 
 	public void ListarTodosClientes() {
-		buscarTodosButton = new MethodButton("Listar Todos Clientes");
-		add(buscarTodosButton, CENTER, CENTER - 50, comprimento, altura);
-	}
-
-	public void ListarCliente() {
-		buscarPorIdButton = new MethodButton("Listar Clientes");
-		add(buscarPorIdButton, CENTER, CENTER, comprimento, altura);
+		buscarTodosButton = new MethodButton("Listar Clientes");
+		add(buscarTodosButton, CENTER, CENTER - 25, comprimento, altura);
 	}
 
 	public void atualizarCliente() {
 		atualizarButton = new MethodButton("Atualizar Cliente");
-		add(atualizarButton, CENTER, CENTER + 50, comprimento, altura);
+		add(atualizarButton, CENTER, CENTER + 25, comprimento, altura);
 	}
 
 	public void deletarCliente() {
 		deletarButton = new MethodButton("Deletar Cliente");
-		add(deletarButton, CENTER, CENTER + 100, comprimento, altura);
+		add(deletarButton, CENTER, CENTER + 75, comprimento, altura);
 	}
 
 	@Override
@@ -64,9 +59,6 @@ public class MenuPrincipal extends Container {
 			} else if (event.target == buscarTodosButton) {
 				ListarTodosClientes listarTodosClientes = new ListarTodosClientes();
 				MainWindow.getMainWindow().swap(listarTodosClientes);
-			} else if (event.target == buscarPorIdButton) {
-				ListarCliente listarCliente = new ListarCliente();
-				MainWindow.getMainWindow().swap(listarCliente);
 			} else if (event.target == atualizarButton) {
 				AtualizarCliente atualizarCliente = new AtualizarCliente();
 				MainWindow.getMainWindow().swap(atualizarCliente);
@@ -75,7 +67,7 @@ public class MenuPrincipal extends Container {
 				MainWindow.getMainWindow().swap(deletarCliente);
 			}
 
-				break;
+			break;
 
 		default:
 			break;

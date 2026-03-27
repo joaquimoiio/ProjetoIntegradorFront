@@ -1,21 +1,20 @@
-package com.totalcross.ui;
+package com.totalcross.util;
 
-import com.totalcross.ui.button.MethodButton;
-
+import totalcross.ui.Button;
 import totalcross.ui.Container;
 import totalcross.ui.Label;
 import totalcross.ui.MainWindow;
 import totalcross.ui.event.ControlEvent;
 import totalcross.ui.event.Event;
+import totalcross.ui.font.Font;
+import totalcross.ui.gfx.Color;
 
 public class Header extends Container {
 
 	private String titulo;
     private Container telaDestino;
     private String botao;
-    private MainWindow mainWindow;
-    private MenuPrincipal menuPrincipal;
-	private MethodButton btnVoltar;
+	private Button btnVoltar;
 
 	public Header(String botao, String titulo, Container telaDestino) {
         this.botao = botao;
@@ -34,7 +33,9 @@ public class Header extends Container {
 
 
     private void botaoVoltar(String botao) {
-        btnVoltar = new MethodButton(botao);
+		btnVoltar = new Button(botao);
+		setBackForeColors(parent.getBackColor(), Color.BLACK);
+		Font font = MainWindow.getDefaultFont().percentBy(100);
         add(btnVoltar, LEFT + 10, getTop(), DP + 50, DP + 25);
     }
 
