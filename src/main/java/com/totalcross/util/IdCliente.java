@@ -8,7 +8,7 @@ import totalcross.ui.Label;
 
 public class IdCliente extends Container {
 
-	public Edit id;
+	private Edit id;
 	private Label lblIdCliente;
 	private String mensagem;
 

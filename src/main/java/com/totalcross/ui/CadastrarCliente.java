@@ -3,6 +3,7 @@ package com.totalcross.ui;
 import java.sql.SQLException;
 
 import com.totalcross.dao.CLIENTEDAO;
+import com.totalcross.entity.Cliente;
 import com.totalcross.ui.button.MethodButton;
 import com.totalcross.util.ErroBox;
 import com.totalcross.util.Header;
@@ -29,7 +30,7 @@ public class CadastrarCliente extends Container {
 	}
 
 	public void initUI() {
-		Header header = new Header("<", "Cadastro novo cliente", new MenuPrincipal());
+		Header header = new Header("<", "Cadastro cliente", new MenuPrincipal());
 		add(header, LEFT, TOP, FILL, DP + 40);
 		tipoDePessoa();
 		nome();
@@ -140,7 +141,15 @@ public class CadastrarCliente extends Container {
 				return;
 			}
 
-			new CLIENTEDAO().insertCliente(nomeStr, tipoStr, cpfStr, cnpjStr, telefoneStr, emailStr);
+			Cliente cliente = new Cliente();
+			cliente.setNomeDoCliente(nomeStr);
+			cliente.setTipoDePessoa(tipoStr);
+			cliente.setCpf(cpfStr);
+			cliente.setCnpj(cnpjStr);
+			cliente.setTelefone(telefoneStr);
+			cliente.setEmail(emailStr);
+
+			new CLIENTEDAO().insertCliente(cliente);
 
 			MessageBox mb = new MessageBox("Atenção!", "Cliente " + nomeStr + " cadastrado com sucesso!");
 			mb.setBackForeColors(Color.WHITE, Color.BLACK);

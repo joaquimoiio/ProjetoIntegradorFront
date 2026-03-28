@@ -25,8 +25,8 @@ public class DatabaseManager {
 			stringBuilder.append("id INTEGER PRIMARY KEY AUTOINCREMENT, ");
 			stringBuilder.append("nomeDoCliente VARCHAR NOT NULL, ");
 			stringBuilder.append("tipoDePessoa VARCHAR NOT NULL, ");
-			stringBuilder.append("cpf VARCHAR NOT NULL, ");
-			stringBuilder.append("cnpj VARCHAR NOT NULL,");
+			stringBuilder.append("cpf VARCHAR, ");
+			stringBuilder.append("cnpj VARCHAR, ");
 			stringBuilder.append("telefone VARCHAR NOT NULL, ");
 			stringBuilder.append("email VARCHAR )");
 

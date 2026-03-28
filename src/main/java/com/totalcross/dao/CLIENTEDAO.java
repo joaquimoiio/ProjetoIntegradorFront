@@ -14,20 +14,19 @@ import totalcross.sql.Statement;
 
 public class CLIENTEDAO {
 
-	public void insertCliente(String nomeDoCliente, String tipoDePessoa, String cpf, String cnpj, String telefone,
-			String email) throws SQLException {
-		
-		String sql = "INSERT INTO person (nomeDoCliente, tipoDePessoa, cpf, cnpj, telefone, email) VALUES (?,?,?,?,?,?,?)";
-		
-		Connection dbcon = DatabaseManager.getConnection(); 
+	public void insertCliente(Cliente cliente) throws SQLException {
+
+		String sql = "INSERT INTO person (nomeDoCliente, tipoDePessoa, cpf, cnpj, telefone, email) VALUES (?,?,?,?,?,?)";
+
+		Connection dbcon = DatabaseManager.getConnection();
 		PreparedStatement ps = dbcon.prepareStatement(sql);
 
-		ps.setString(1, nomeDoCliente);
-		ps.setString(2, tipoDePessoa);
-		ps.setString(3, cpf);
-		ps.setString(4, cnpj);
-		ps.setString(5, telefone);
-		ps.setString(6, email);
+		ps.setString(1, cliente.getNomeDoCliente());
+		ps.setString(2, cliente.getTipoDePessoa());
+		ps.setString(3, cliente.getCpf());
+		ps.setString(4, cliente.getCnpj());
+		ps.setString(5, cliente.getTelefone());
+		ps.setString(6, cliente.getEmail());
 
 		ps.executeUpdate();
 

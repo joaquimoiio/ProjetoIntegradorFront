@@ -36,11 +36,13 @@ public class Header extends Container {
 		btnVoltar = new Button(botao);
 		setBackForeColors(parent.getBackColor(), Color.BLACK);
 		Font font = MainWindow.getDefaultFont().percentBy(100);
-        add(btnVoltar, LEFT + 10, getTop(), DP + 50, DP + 25);
+        add(btnVoltar, LEFT + 10, getTop() + 6, DP + 50, DP + 25);
     }
 
     private void titulo(String titulo) {
         Label lblTitulo = new Label(titulo);
+		Font font = MainWindow.getDefaultFont().percentBy(200);
+		setFont(font);
         add(lblTitulo, CENTER, getTop() + 5);
     }
 	
