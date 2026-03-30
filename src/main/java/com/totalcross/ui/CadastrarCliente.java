@@ -2,8 +2,8 @@ package com.totalcross.ui;
 
 import java.sql.SQLException;
 
-import com.totalcross.dao.CLIENTEDAO;
 import com.totalcross.entity.Cliente;
+import com.totalcross.service.ClienteService;
 import com.totalcross.ui.button.MethodButton;
 import com.totalcross.util.ErroBox;
 import com.totalcross.util.Header;
@@ -23,6 +23,7 @@ public class CadastrarCliente extends Container {
 	private Edit nome, cpf, cnpj, telefone, email;
 	private ComboBox tipoDePessoa;
 	private Label lblCpfCnpj;
+	private ClienteService service = new ClienteService();
 
 	String[] tipo = { "FISICA", "JURIDICA" };
 
@@ -111,10 +112,6 @@ public class CadastrarCliente extends Container {
 		add(btnCadastrar, RIGHT - 30, AFTER + 30, DP + 75, DP + 35);
 	}
 
-	private boolean validarEmail(String texto) {
-		return texto.contains("@") && texto.contains(".");
-	}
-
 	private void doInsert() {
 		try {
 			String nomeStr = nome.getTextWithoutMask();
@@ -124,23 +121,6 @@ public class CadastrarCliente extends Container {
 			String telefoneStr = telefone.getTextWithoutMask();
 			String emailStr = email.getText().trim();
 
-			if (nomeStr.isEmpty()) {
-				new ErroBox("Erro", "O nome não pode estar em branco!", new String[] { "Voltar" }).popup();
-				return;
-			}
-			if (cpfStr.isEmpty() && cnpjStr.isEmpty()) {
-				new ErroBox("Erro", "O CPF/CNPJ não pode estar em branco!", new String[] { "Voltar" }).popup();
-				return;
-			}
-			if (telefoneStr.isEmpty()) {
-				new ErroBox("Erro", "O telefone não pode estar em branco!", new String[] { "Voltar" }).popup();
-				return;
-			}
-			if (!validarEmail(emailStr) && !emailStr.isEmpty()) {
-				new ErroBox("Erro", "O e-mail informado é inválido!", new String[] { "Voltar" }).popup();
-				return;
-			}
-
 			Cliente cliente = new Cliente();
 			cliente.setNomeDoCliente(nomeStr);
 			cliente.setTipoDePessoa(tipoStr);
@@ -149,12 +129,13 @@ public class CadastrarCliente extends Container {
 			cliente.setTelefone(telefoneStr);
 			cliente.setEmail(emailStr);
 
-			new CLIENTEDAO().insertCliente(cliente);
+			service.cadastrarCliente(cliente);
 
 			MessageBox mb = new MessageBox("Atenção!", "Cliente " + nomeStr + " cadastrado com sucesso!");
 			mb.setBackForeColors(Color.WHITE, Color.BLACK);
 			mb.popup();
-
+		} catch (IllegalArgumentException e) {
+			new ErroBox("Atenção!", e.getMessage(), new String[] { "Voltar" }).popup();
 		} catch (SQLException e) {
 			new ErroBox("Erro ao Cadastrar", "Erro ao salvar no banco de dados!", new String[] { "Voltar" }).popup();
 		}

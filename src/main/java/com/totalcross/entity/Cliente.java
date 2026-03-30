@@ -16,6 +16,8 @@ public class Cliente {
 
 	private String email;
 
+	private boolean sync = false;
+
 	public Cliente() {
 	}
 
@@ -84,6 +86,14 @@ public class Cliente {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public boolean isSync() {
+		return sync;
+	}
+
+	public void setSync(boolean sync) {
+		this.sync = sync;
 	}
 
 }

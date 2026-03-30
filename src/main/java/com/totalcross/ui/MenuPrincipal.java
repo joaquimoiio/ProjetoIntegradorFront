@@ -2,6 +2,7 @@ package com.totalcross.ui;
 
 import com.totalcross.ui.button.MethodButton;
 import com.totalcross.util.Header;
+import com.totalcross.util.SyncCliente;
 
 import totalcross.ui.Container;
 import totalcross.ui.MainWindow;
@@ -11,10 +12,12 @@ import totalcross.ui.event.EventHandler;
 
 public class MenuPrincipal extends Container {
 
-	private MethodButton cadastrarButton, buscarTodosButton, atualizarButton, deletarButton;
+	private MethodButton cadastrarButton, buscarTodosButton, atualizarButton, deletarButton, enviarDados;
 
 	private static int comprimento = 175;
 	private static int altura = 40;
+
+	private SyncCliente sync = new SyncCliente();
 
 	public MenuPrincipal() {
 	}
@@ -26,6 +29,7 @@ public class MenuPrincipal extends Container {
 		ListarTodosClientes();
 		atualizarCliente();
 		deletarCliente();
+		enviarDados();
 	}
 
 	public void cadastrarCliente() {
@@ -49,6 +53,11 @@ public class MenuPrincipal extends Container {
 		add(deletarButton, CENTER, CENTER + 75, comprimento, altura);
 	}
 
+	public void enviarDados() {
+		enviarDados = new MethodButton("Enviar Sync");
+		add(enviarDados, CENTER, CENTER + 125, comprimento, altura);
+	}
+
 	@Override
 	public <H extends EventHandler> void onEvent(Event<H> event) {
 		switch (event.type) {
@@ -65,6 +74,8 @@ public class MenuPrincipal extends Container {
 			} else if (event.target == deletarButton) {
 				DeletarCliente deletarCliente = new DeletarCliente();
 				MainWindow.getMainWindow().swap(deletarCliente);
+			} else if (event.target == enviarDados) {
+				sync.sincronizarTodos();
 			}
 
 			break;

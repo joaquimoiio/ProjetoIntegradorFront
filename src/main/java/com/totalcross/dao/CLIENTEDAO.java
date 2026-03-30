@@ -16,7 +16,7 @@ public class CLIENTEDAO {
 
 	public void insertCliente(Cliente cliente) throws SQLException {
 
-		String sql = "INSERT INTO person (nomeDoCliente, tipoDePessoa, cpf, cnpj, telefone, email) VALUES (?,?,?,?,?,?)";
+		String sql = "INSERT INTO person (nomeDoCliente, tipoDePessoa, cpf, cnpj, telefone, email, sync) VALUES (?,?,?,?,?,?,?)";
 
 		Connection dbcon = DatabaseManager.getConnection();
 		PreparedStatement ps = dbcon.prepareStatement(sql);
@@ -27,6 +27,7 @@ public class CLIENTEDAO {
 		ps.setString(4, cliente.getCnpj());
 		ps.setString(5, cliente.getTelefone());
 		ps.setString(6, cliente.getEmail());
+		ps.setBoolean(7, cliente.isSync());
 
 		ps.executeUpdate();
 
@@ -86,15 +87,95 @@ public class CLIENTEDAO {
 		cliente.setCnpj(rs.getString("cnpj"));
 		cliente.setTelefone(rs.getString("telefone"));
 		cliente.setEmail(rs.getString("email"));
+		cliente.setSync(rs.getBoolean("sync"));
 
 		return cliente;
 	}
 
 	public void deletarCliente(Cliente cliente) throws SQLException {
 
+
 		Connection dbcon = DatabaseManager.getConnection();
 		PreparedStatement ps = dbcon.prepareStatement("DELETE FROM person WHERE id = ?");
 		ps.setLong(1, cliente.getId());
+		ps.executeUpdate();
+		ps.close();
+		dbcon.close();
+
+	}
+
+	public void atualizarCliente(Cliente cliente) throws SQLException {
+
+		Connection dbcon = DatabaseManager.getConnection();
+		PreparedStatement ps = dbcon
+				.prepareStatement("UPDATE person SET telefone = ?, email = ? , sync = ?  WHERE id = ?");
+		ps.setString(1, cliente.getTelefone());
+		ps.setString(2, cliente.getEmail());
+		ps.setBoolean(3, false);
+		ps.setLong(4, cliente.getId());
+
+		ps.executeUpdate();
+
+		ps.close();
+		dbcon.close();
+	}
+
+	public boolean existeId(Cliente id) throws SQLException {
+		Connection dbcon = DatabaseManager.getConnection();
+		Statement st = dbcon.createStatement();
+		PreparedStatement ps = dbcon.prepareStatement("SELECT * FROM person WHERE id = ?");
+		ps.setLong(1, id.getId());
+		ResultSet rs = ps.executeQuery();
+
+		return rs.next();
+	}
+
+	public boolean Cpf(Cliente cpf) throws SQLException {
+		Connection dbcon = DatabaseManager.getConnection();
+		Statement st = dbcon.createStatement();
+		PreparedStatement ps = dbcon.prepareStatement("SELECT * FROM person WHERE cpf = ?");
+		ps.setString(1, cpf.getCpf());
+		ResultSet rs = ps.executeQuery();
+
+		return rs.next();
+	}
+
+	public boolean Cnpj(Cliente cnpj) throws SQLException {
+		Connection dbcon = DatabaseManager.getConnection();
+		Statement st = dbcon.createStatement();
+		PreparedStatement ps = dbcon.prepareStatement("SELECT * FROM person WHERE cnpj = ?");
+		ps.setString(1, cnpj.getCnpj());
+		ResultSet rs = ps.executeQuery();
+
+		return rs.next();
+	}
+
+	public List<Cliente> buscarNaoSincronizados() throws SQLException {
+
+		List<Cliente> clientes = new ArrayList<>();
+
+		Connection dbcon = DatabaseManager.getConnection();
+		PreparedStatement ps = dbcon.prepareStatement("SELECT * FROM person WHERE sync = ?");
+		ps.setBoolean(1, false);
+		ResultSet rs = ps.executeQuery();
+
+		while (rs.next()) {
+			clientes.add(montaCliente(rs));
+		}
+
+		rs.close();
+		ps.close();
+		dbcon.close();
+
+		return clientes;
+	}
+
+	public void marcarComoSincronizado(Cliente cliente) throws SQLException {
+
+		Connection dbcon = DatabaseManager.getConnection();
+		PreparedStatement ps = dbcon.prepareStatement("UPDATE person SET sync = ? WHERE id = ?");
+		ps.setBoolean(1, true);
+		ps.setLong(2, cliente.getId());
 		ps.executeUpdate();
 		ps.close();
 		dbcon.close();

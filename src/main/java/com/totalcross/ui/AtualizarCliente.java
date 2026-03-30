@@ -1,18 +1,37 @@
 package com.totalcross.ui;
 
 
+import java.sql.SQLException;
+
+import com.totalcross.entity.Cliente;
+import com.totalcross.service.ClienteService;
 import com.totalcross.ui.button.MethodButton;
+import com.totalcross.util.ErroBox;
 import com.totalcross.util.Header;
 import com.totalcross.util.IdCliente;
 import com.totalcross.util.ListarClientesComponente;
 
+import totalcross.sys.InvalidNumberException;
 import totalcross.ui.Container;
 import totalcross.ui.Edit;
 import totalcross.ui.Label;
+import totalcross.ui.dialog.MessageBox;
+import totalcross.ui.event.ControlEvent;
+import totalcross.ui.event.Event;
+import totalcross.ui.event.EventHandler;
+import totalcross.ui.gfx.Color;
 
 public class AtualizarCliente extends Container {
 
 	private Edit email, telefone;
+
+	private MethodButton btnAtualizar;
+	
+	private IdCliente idCliente;
+
+	private ClienteService service = new ClienteService();
+
+	private ListarClientesComponente listaClientes;
 
 	public AtualizarCliente() {
 
@@ -23,14 +42,15 @@ public class AtualizarCliente extends Container {
 		Header header = new Header("<", "Atualizar cliente", new MenuPrincipal());
 		add(header, LEFT, TOP, FILL, DP + 40);
 
-		IdCliente idCliente = new IdCliente("Digite o id do Cliente para filtrar:");
+		idCliente = new IdCliente("Digite o id do Cliente para filtrar:");
 		add(idCliente, LEFT, AFTER + 10, FILL, PARENTSIZE + 9);
 
-		ListarClientesComponente listaClientes = new ListarClientesComponente();
+		listaClientes = new ListarClientesComponente();
 		add(listaClientes, LEFT + 10, AFTER + 10, FILL - 10, PARENTSIZE + 40);
+		listaClientes.carregarClientes();
 
-		atualizarEmail();
 		atualizarTelefone();
+		atualizarEmail();
 		botaoAtualizar();
 
 	}
@@ -49,28 +69,71 @@ public class AtualizarCliente extends Container {
 
 	public void atualizarEmail() {
 
-		Label lblEmail = new Label("Digite o email que voce quer atualizar");
+		Label lblEmail = new Label("Digite o novo email");
 		add(lblEmail, getLeft(), AFTER + 10);
 
 		email = new Edit();
 		add(email, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
 	}
 
-	private boolean validarEmail(String texto) {
-		return texto.contains("@") && texto.contains(".");
-	}
-
 	public void atualizarTelefone() {
-		Label lblTelefone = new Label("Digite o telefone que voce quer atualizar");
+		Label lblTelefone = new Label("Digite o novo telefone");
 		add(lblTelefone, getLeft(), AFTER + 15);
 
-		telefone = new Edit();
+		telefone = new Edit("(99) 99999-9999");
+		telefone.setMaxLength(11);
+		telefone.setKeyboard(Edit.KBD_NUMERIC);
+		telefone.setValidChars("0123456789");
 		add(telefone, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
 	}
 
 	public void botaoAtualizar() {
-		MethodButton btnAtualizar = new MethodButton("Atualizar");
+		btnAtualizar = new MethodButton("Atualizar");
 		add(btnAtualizar, RIGHT - 30, AFTER + 30, DP + 75, DP + 35);
+	}
+
+	private void doUpdate() throws InvalidNumberException {
+		try {
+			Cliente cliente = service.clienteFinter(idCliente.getValue());
+			String telefoneStr = telefone.getTextWithoutMask();
+			String emailStr = email.getText().trim();
+
+			cliente.setTelefone(telefoneStr);
+			cliente.setEmail(emailStr);
+
+			service.atualizarCliente(cliente);
+
+			MessageBox mb = new MessageBox("Atenção!",
+					"Cliente com id:" + idCliente.getValue() + " atualizado com sucesso!");
+			mb.setBackForeColors(Color.WHITE, Color.BLACK);
+			mb.popup();
+
+		} catch (IllegalArgumentException e) {
+			new ErroBox("Atenção!", e.getMessage(), new String[] { "Voltar" }).popup();
+		} catch (SQLException e) {
+			new ErroBox("Erro ao Atualizar", "Erro ao salvar no banco de dados!", new String[] { "Voltar" }).popup();
+		}
+	}
+
+	@Override
+	public <H extends EventHandler> void onEvent(Event<H> event) {
+		super.onEvent(event);
+		switch (event.type) {
+		case ControlEvent.PRESSED:
+			if (event.target == btnAtualizar) {
+				try {
+					doUpdate();
+					listaClientes.limparLista();
+					listaClientes.carregarClientes();
+				} catch (InvalidNumberException e) {
+					e.printStackTrace();
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
 	}
 
 }

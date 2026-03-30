@@ -1,8 +1,5 @@
 package com.totalcross.ui;
 
-import java.sql.SQLException;
-
-import com.totalcross.dao.CLIENTEDAO;
 import com.totalcross.entity.Cliente;
 import com.totalcross.ui.button.MethodButton;
 import com.totalcross.util.Header;
@@ -19,6 +16,7 @@ public class ListarTodosClientes extends Container {
 
 	private IdCliente idCliente;
 	private MethodButton btnFiltrar;
+	private ListarClientesComponente listaClientes;
 
 	public ListarTodosClientes() {
 
@@ -36,8 +34,14 @@ public class ListarTodosClientes extends Container {
 		idCliente = new IdCliente("Digite o id do Cliente para filtrar:");
 		add(idCliente, LEFT, AFTER + 10, FILL, PARENTSIZE + 9);
 
-		ListarClientesComponente listaClientes = new ListarClientesComponente();
+		listaClientes = new ListarClientesComponente();
 		add(listaClientes, LEFT + 10, AFTER + 10, FILL - 10, FILL - 65);
+
+		try {
+			verificarId();
+		} catch (InvalidNumberException e) {
+			e.printStackTrace();
+		}
 
 		botaoFiltrar();
 
@@ -54,10 +58,8 @@ public class ListarTodosClientes extends Container {
 		case ControlEvent.PRESSED:
 			if (event.target == btnFiltrar) {
 				try {
-					new CLIENTEDAO().buscarClientePorId(clienteFinter());
+					verificarId();
 				} catch (InvalidNumberException e) {
-					e.printStackTrace();
-				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
@@ -73,6 +75,14 @@ public class ListarTodosClientes extends Container {
 		Cliente cliente = new Cliente();
 		cliente.setId(idCliente.getValue());
 		return cliente;
+	}
+
+	public void verificarId() throws InvalidNumberException {
+		if (idCliente.getValue() == 0) {
+			listaClientes.carregarClientes();
+		} else {
+			listaClientes.carregarClientesPorId(clienteFinter());
+		}
 	}
 
 
