@@ -21,7 +21,6 @@ aven.apache.org/xsd/maven-4.0.0.xsd">
             <version>7.1.0</version>
         </dependency>
 
-        <!-- IMPLEMENTAÇÃO DO SLF4J (RESOLVE O ERRO) -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

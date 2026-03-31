@@ -4,6 +4,7 @@ import com.totalcross.ui.button.MethodButton;
 import com.totalcross.util.Header;
 import com.totalcross.util.SyncCliente;
 
+import totalcross.net.HttpStream;
 import totalcross.ui.Container;
 import totalcross.ui.MainWindow;
 import totalcross.ui.event.ControlEvent;
@@ -12,12 +13,14 @@ import totalcross.ui.event.EventHandler;
 
 public class MenuPrincipal extends Container {
 
-	private MethodButton cadastrarButton, buscarTodosButton, atualizarButton, deletarButton, enviarDados;
+	private MethodButton cadastrarButton, buscarTodosButton, atualizarButton, deletarButton, enviarDados, receberDados;
 
 	private static int comprimento = 175;
 	private static int altura = 40;
 
 	private SyncCliente sync = new SyncCliente();
+
+	private String url = "http://localhost:8080/sync";
 
 	public MenuPrincipal() {
 	}
@@ -30,6 +33,7 @@ public class MenuPrincipal extends Container {
 		atualizarCliente();
 		deletarCliente();
 		enviarDados();
+		receberDados();
 	}
 
 	public void cadastrarCliente() {
@@ -56,6 +60,13 @@ public class MenuPrincipal extends Container {
 	public void enviarDados() {
 		enviarDados = new MethodButton("Enviar Sync");
 		add(enviarDados, CENTER, CENTER + 125, comprimento, altura);
+		enviarDados.addPressListener(sync.getPressListener(url + "/cliente", HttpStream.POST));
+	}
+
+	public void receberDados() {
+		receberDados = new MethodButton("Receber Sync");
+		add(receberDados, CENTER, CENTER + 175, comprimento, altura);
+		receberDados.addPressListener(sync.getPressListener(url + "/cliente", HttpStream.GET));
 	}
 
 	@Override
@@ -74,9 +85,8 @@ public class MenuPrincipal extends Container {
 			} else if (event.target == deletarButton) {
 				DeletarCliente deletarCliente = new DeletarCliente();
 				MainWindow.getMainWindow().swap(deletarCliente);
-			} else if (event.target == enviarDados) {
-				sync.sincronizarTodos();
 			}
+
 
 			break;
 

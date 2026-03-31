@@ -2,11 +2,19 @@ package com.totalcross.dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
+
+import org.json.simple.JSONObject;
 
 import com.totalcross.entity.Cliente;
 import com.totalcross.util.DatabaseManager;
+import com.totalcross.util.SyncCliente;
+import com.totalcross.util.SyncCliente.Response;
 
+import totalcross.io.IOException;
+import totalcross.net.HttpStream;
+import totalcross.net.HttpStream.Options;
+import totalcross.net.URI;
+import totalcross.net.UnknownHostException;
 import totalcross.sql.Connection;
 import totalcross.sql.PreparedStatement;
 import totalcross.sql.ResultSet;
@@ -35,9 +43,9 @@ public class CLIENTEDAO {
 		dbcon.close();
 	}
 
-	public List<Cliente> buscarTodosClientes() throws SQLException {
+	public ArrayList<Cliente> buscarTodosClientes() throws SQLException {
 		
-		List<Cliente> clientes = new ArrayList<>();
+		ArrayList<Cliente> clientes = new ArrayList<>();
 		
 		Connection dbcon = DatabaseManager.getConnection();
 		Statement st = dbcon.createStatement();
@@ -92,6 +100,8 @@ public class CLIENTEDAO {
 		return cliente;
 	}
 
+
+
 	public void deletarCliente(Cliente cliente) throws SQLException {
 
 
@@ -120,6 +130,20 @@ public class CLIENTEDAO {
 		dbcon.close();
 	}
 
+	public void atualizarClienteSync(Cliente cliente) throws SQLException {
+		Connection dbcon = DatabaseManager.getConnection();
+		PreparedStatement ps = dbcon
+				.prepareStatement("UPDATE person SET telefone = ?, email = ?, sync = ? WHERE cpf = ? OR cnpj = ?");
+		ps.setString(1, cliente.getTelefone());
+		ps.setString(2, cliente.getEmail());
+		ps.setBoolean(3, true);
+		ps.setString(4, cliente.getCpf());
+		ps.setString(5, cliente.getCnpj());
+		ps.executeUpdate();
+		ps.close();
+		dbcon.close();
+	}
+
 	public boolean existeId(Cliente id) throws SQLException {
 		Connection dbcon = DatabaseManager.getConnection();
 		Statement st = dbcon.createStatement();
@@ -127,32 +151,121 @@ public class CLIENTEDAO {
 		ps.setLong(1, id.getId());
 		ResultSet rs = ps.executeQuery();
 
-		return rs.next();
+		boolean existe = rs.next();
+		rs.close();
+		ps.close();
+		dbcon.close();
+		return existe;
 	}
 
-	public boolean Cpf(Cliente cpf) throws SQLException {
+	public boolean cpf(Cliente cpf) throws SQLException {
 		Connection dbcon = DatabaseManager.getConnection();
 		Statement st = dbcon.createStatement();
 		PreparedStatement ps = dbcon.prepareStatement("SELECT * FROM person WHERE cpf = ?");
 		ps.setString(1, cpf.getCpf());
 		ResultSet rs = ps.executeQuery();
 
-		return rs.next();
+		boolean existe = rs.next();
+		rs.close();
+		ps.close();
+		dbcon.close();
+		return existe;
 	}
 
-	public boolean Cnpj(Cliente cnpj) throws SQLException {
+	public boolean cnpj(Cliente cnpj) throws SQLException {
 		Connection dbcon = DatabaseManager.getConnection();
 		Statement st = dbcon.createStatement();
 		PreparedStatement ps = dbcon.prepareStatement("SELECT * FROM person WHERE cnpj = ?");
 		ps.setString(1, cnpj.getCnpj());
 		ResultSet rs = ps.executeQuery();
 
-		return rs.next();
+		boolean existe = rs.next();
+		rs.close();
+		ps.close();
+		dbcon.close();
+		return existe;
 	}
 
-	public List<Cliente> buscarNaoSincronizados() throws SQLException {
+	public void enviarDados(String url, Options options) throws SQLException, UnknownHostException, IOException {
 
-		List<Cliente> clientes = new ArrayList<>();
+		ArrayList<Cliente> clientes = buscarTodosClientes();
+
+		if (clientes.isEmpty()) {
+			return;
+		}
+
+		for (Cliente cliente : clientes) {
+			JSONObject jsonCliente = new JSONObject();
+			jsonCliente.put("nomeDoCliente", cliente.getNomeDoCliente());
+			jsonCliente.put("tipoDePessoa", cliente.getTipoDePessoa());
+			jsonCliente.put("cpf", cliente.getCpf() != null ? cliente.getCpf() : "");
+			jsonCliente.put("cnpj", cliente.getCnpj() != null ? cliente.getCnpj() : "");
+			jsonCliente.put("telefone", cliente.getTelefone());
+			jsonCliente.put("email", cliente.getEmail());
+			jsonCliente.put("sync", cliente.isSync());
+
+			options.data = jsonCliente.toString();
+			HttpStream http = new HttpStream(new URI(url), options);
+
+			System.out.println("JSON enviado: " + jsonCliente.toString());
+			System.out.println("Response code: " + http.responseCode);
+
+			if (http.responseCode == 200) {
+				marcarComoSincronizado(cliente);
+			}
+
+			http.close();
+		}
+
+
+	}
+
+	public void recebeDados(Response<Cliente> response) {
+		for (Cliente cliente : response.listData) {
+			Cliente clienteR = new Cliente();
+			clienteR.setId(cliente.getId());
+			clienteR.setNomeDoCliente(cliente.getNomeDoCliente());
+			clienteR.setTipoDePessoa(cliente.getTipoDePessoa());
+			clienteR.setCpf(cliente.getCpf());
+			clienteR.setCnpj(cliente.getCnpj());
+			clienteR.setTelefone(cliente.getTelefone());
+			clienteR.setEmail(cliente.getEmail());
+			clienteR.setSync(cliente.isSync());
+
+
+
+			try {
+				if ("FISICA".equals(clienteR.getTipoDePessoa())) {
+					if (!cpf(clienteR)) {
+						insertCliente(clienteR);
+						marcarComoSincronizado(cliente);
+					} else {
+						atualizarClienteSync(clienteR);
+					}
+				} else {
+					if (!cnpj(clienteR)) {
+						insertCliente(clienteR);
+						marcarComoSincronizado(cliente);
+					} else {
+						atualizarClienteSync(clienteR);
+					}
+				}
+
+
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			System.out.println("CNPJ recebido: " + cliente.getCnpj());
+			System.out.println("Tipo: " + cliente.getTipoDePessoa());
+		}
+
+
+	}
+
+	public ArrayList<Cliente> buscarNaoSincronizados() throws SQLException {
+
+		ArrayList<Cliente> clientes = new ArrayList<>();
 
 		Connection dbcon = DatabaseManager.getConnection();
 		PreparedStatement ps = dbcon.prepareStatement("SELECT * FROM person WHERE sync = ?");
@@ -179,6 +292,24 @@ public class CLIENTEDAO {
 		ps.executeUpdate();
 		ps.close();
 		dbcon.close();
+	}
+
+	public void syncClientes() throws SQLException {
+		ArrayList<Cliente> clientesApp = buscarTodosClientes();
+		for (Cliente clienteApp : clientesApp) {
+			if (!checkClienteExistsWeb(clienteApp)) {
+					deletarCliente(clienteApp);
+				}
+		}
+	}
+
+	public boolean checkClienteExistsWeb(Cliente cliente) {
+		try {
+			return SyncCliente.checkClienteExists(cliente);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

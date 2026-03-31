@@ -102,7 +102,7 @@ public class ListarClientesComponente extends Container {
 			cpfLabel.setForeColor(Color.BLACK);
 			card.add(cpfLabel, RIGHT - 3, AFTER + 3);
 		} else {
-			Label cnpjLabel = new Label("Cnpj: " + nomeCliente.getCpf());
+			Label cnpjLabel = new Label("Cnpj: " + nomeCliente.getCnpj());
 			cnpjLabel.setForeColor(Color.BLACK);
 			card.add(cnpjLabel, RIGHT - 3, AFTER + 3);
 		}

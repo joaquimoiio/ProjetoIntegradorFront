@@ -1,85 +1,107 @@
 package com.totalcross.util;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.totalcross.dao.CLIENTEDAO;
 import com.totalcross.entity.Cliente;
 
+import totalcross.io.ByteArrayStream;
 import totalcross.io.IOException;
+import totalcross.json.JSONFactory;
 import totalcross.net.HttpStream;
 import totalcross.net.URI;
-import totalcross.util.Hashtable;
+import totalcross.ui.dialog.MessageBox;
+import totalcross.ui.event.ControlEvent;
+import totalcross.ui.event.PressListener;
 
 public class SyncCliente {
 
+	public static final String CONTENT_TYPE_JSON = "application/json";
+
 	private CLIENTEDAO dao = new CLIENTEDAO();
 
-	private String safe(String value) {
-		return value != null ? value : "";
-	}
+	public PressListener getPressListener(final String url, final String httpType) {
+		return new PressListener() {
+			@Override
+			public void controlPressed(ControlEvent e) {
+				HttpStream.Options options = new HttpStream.Options();
+				options.httpType = httpType;
 
-	public void sincronizarTodos() {
-		try {
-			List<Cliente> pendentes = dao.buscarNaoSincronizados();
+				try {
+					if (HttpStream.GET.equals(httpType)) {
+						HttpStream httpStream = null;
+						try {
+							httpStream = new HttpStream(new URI(url), options);
+							ByteArrayStream bas = new ByteArrayStream(4096);
+							bas.readFully(httpStream, 10, 2048);
+							String data = new String(bas.getBuffer(), 0, bas.available());
 
-			if (pendentes.isEmpty()) {
-				return;
-			}
+							Response<Cliente> response = new Response<>();
+							response.responseCode = httpStream.responseCode;
+							response.listData = JSONFactory.asList(data, Cliente.class);
 
-			for (Cliente cliente : pendentes) {
-				boolean enviado = enviarDados(cliente);
-				if (enviado) {
-					dao.marcarComoSincronizado(cliente);
+							dao.recebeDados(response);
+							new MessageBox("Informação", "Dados recebidos com sucesso!").popup();
+
+						} finally {
+							if (httpStream != null) {
+								try {
+									httpStream.close();
+								} catch (IOException e1) {
+									e1.printStackTrace();
+								}
+							}
+						}
+
+					} else if (HttpStream.POST.equals(httpType)) {
+						options.setContentType(CONTENT_TYPE_JSON);
+						dao.enviarDados(url, options);
+						new MessageBox("Informação", "Dados enviados com sucesso!").popup();
+					}
+
+				} catch (Exception ex) {
+					new MessageBox("Erro", "Não foi possível receber ou enviar dados: " + ex.getMessage()).popup();
 				}
 			}
+		};
+	}
 
-		} catch (SQLException e) {
-			e.printStackTrace();
+	public static class Response<T> {
+		public T data;
+		public List<T> listData;
+		public int responseCode;
+	}
+
+	public static boolean checkClienteExists(Cliente cliente) {
+		String cpf = cliente.getCpf() != null ? cliente.getCpf() : "null";
+		String cnpj = cliente.getCnpj() != null ? cliente.getCnpj() : "null";
+
+		String url = "http://localhost:8080/sync/cliente/exists/" + cpf + "/" + cnpj;
+
+		HttpStream httpStream = null;
+		HttpStream.Options options = new HttpStream.Options();
+		options.httpType = HttpStream.GET;
+
+		try {
+			httpStream = new HttpStream(new URI(url), options);
+			String response = httpStream.readLine();
+			return "true".equals(response);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		} finally {
+			if (httpStream != null) {
+				try {
+					httpStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
-	private boolean enviarDados(Cliente cliente) {
-        HttpStream stream = null;
 
-        try {
-			String url = "http://10.1.1.101:8081/sync/cliente";
 
-            String json = "{"
-					+ "\"id\":" + cliente.getId() + "," + "\"nomeDoCliente\":\"" + safe(cliente.getNomeDoCliente())
-					+ "\"," + "\"tipoDePessoa\":\"" + safe(cliente.getTipoDePessoa()) + "\"," + "\"cpf\":\""
-					+ safe(cliente.getCpf()) + "\"," + "\"cnpj\":\"" + safe(cliente.getCnpj()) + "\","
-					+ "\"telefone\":\"" + safe(cliente.getTelefone()) + "\"," + "\"email\":\""
-					+ safe(cliente.getEmail()) + "\"," + "\"sync\":" + cliente.isSync()
-                    + "}";
 
-			Hashtable headers = new Hashtable(2);
-			headers.put("Content-Type", "application/json");
-			headers.put("Content-Length", String.valueOf(json.length()));
 
-            HttpStream.Options options = new HttpStream.Options();
-			options.httpType = HttpStream.POST;
-			options.postHeaders = headers;
-
-            stream = new HttpStream(new URI(url), options);
-			stream.writeBytes(json);
-
-            int responseCode = stream.responseCode;
-
-			return responseCode == 200;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 }

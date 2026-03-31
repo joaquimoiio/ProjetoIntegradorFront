@@ -126,11 +126,11 @@ public class ClienteService {
 	}
 
 	private boolean existeCpf(Cliente cpf) throws SQLException {
-		return dao.Cpf(cpf);
+		return dao.cpf(cpf);
 	}
 
 	private boolean existeCnpj(Cliente cliente) throws SQLException {
-		return dao.Cnpj(cliente);
+		return dao.cnpj(cliente);
 	}
 
 	public void validarId(Cliente cliente) throws SQLException {
