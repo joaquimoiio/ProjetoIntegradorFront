@@ -3,6 +3,7 @@ package com.totalcross.ui;
 
 import java.sql.SQLException;
 
+import com.totalcross.dao.CLIENTEDAO;
 import com.totalcross.entity.Cliente;
 import com.totalcross.service.ClienteService;
 import com.totalcross.ui.button.MethodButton;
@@ -25,11 +26,13 @@ public class AtualizarCliente extends Container {
 
 	private Edit email, telefone;
 
-	private MethodButton btnAtualizar;
+	private MethodButton btnAtualizar, btnBuscar;
 	
 	private IdCliente idCliente;
 
 	private ClienteService service = new ClienteService();
+
+	private CLIENTEDAO dao = new CLIENTEDAO();
 
 	private ListarClientesComponente listaClientes;
 
@@ -45,8 +48,10 @@ public class AtualizarCliente extends Container {
 		idCliente = new IdCliente("Digite o id do Cliente para filtrar:");
 		add(idCliente, LEFT, AFTER + 10, FILL, PARENTSIZE + 9);
 
+		botaoBuscar();
+
 		listaClientes = new ListarClientesComponente();
-		add(listaClientes, LEFT + 10, AFTER + 10, FILL - 10, PARENTSIZE + 40);
+		add(listaClientes, LEFT + 10, AFTER + 10, FILL - 10, PARENTSIZE + 35);
 		listaClientes.carregarClientes();
 
 		atualizarTelefone();
@@ -87,16 +92,53 @@ public class AtualizarCliente extends Container {
 		add(telefone, getLeft(), AFTER + 5, getFill(), getPreferredEdit());
 	}
 
+	public void botaoBuscar() {
+		btnBuscar = new MethodButton("Buscar");
+		add(btnBuscar, RIGHT - 30, AFTER + 5, DP + 75, DP + 35);
+	}
 	public void botaoAtualizar() {
 		btnAtualizar = new MethodButton("Atualizar");
 		add(btnAtualizar, RIGHT - 30, AFTER + 30, DP + 75, DP + 35);
 	}
 
+	private void preencherCamposDoCliente() {
+		try {
+			long id = idCliente.getValue();
+			if (id == 0)
+				return;
+
+			Cliente clienteBusca = service.clienteFinter(id);
+
+			if (!dao.existeId(clienteBusca)) {
+				new ErroBox("Atenção!", "Cliente não encontrado!", new String[] { "Voltar" }).popup();
+				return;
+			}
+
+			Cliente cliente = dao.buscarClientePorId(clienteBusca);
+			telefone.setText(cliente.getTelefone() != null ? cliente.getTelefone() : "");
+			email.setText(cliente.getEmail() != null ? cliente.getEmail() : "");
+
+			listaClientes.limparLista();
+			listaClientes.carregarClientesPorId(clienteBusca);
+
+		} catch (InvalidNumberException e) {
+			new ErroBox("Atenção!", "ID inválido!", new String[] { "Voltar" }).popup();
+		} catch (SQLException e) {
+			new ErroBox("Erro", "Erro ao buscar cliente!", new String[] { "Voltar" }).popup();
+		}
+	}
+
 	private void doUpdate() throws InvalidNumberException {
 		try {
+
 			Cliente cliente = service.clienteFinter(idCliente.getValue());
 			String telefoneStr = telefone.getTextWithoutMask();
 			String emailStr = email.getText().trim();
+
+			if (telefoneStr == null || telefoneStr.trim().isEmpty() || telefoneStr == "") {
+				new ErroBox("Atenção!", "Telefone nao informado", new String[] { "Voltar" }).popup();
+				return;
+			}
 
 			cliente.setTelefone(telefoneStr);
 			cliente.setEmail(emailStr);
@@ -120,6 +162,9 @@ public class AtualizarCliente extends Container {
 		super.onEvent(event);
 		switch (event.type) {
 		case ControlEvent.PRESSED:
+			if (event.target == btnBuscar) {
+				preencherCamposDoCliente();
+			}
 			if (event.target == btnAtualizar) {
 				try {
 					doUpdate();
@@ -130,10 +175,14 @@ public class AtualizarCliente extends Container {
 				}
 			}
 			break;
-
 		default:
 			break;
 		}
 	}
-
 }
+
+
+
+
+
+

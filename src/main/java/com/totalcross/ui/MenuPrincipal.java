@@ -26,7 +26,7 @@ public class MenuPrincipal extends Container {
 	}
 
 	public void initUI() {
-        Header header = new Header("Logout","Menu Principal", new Login());
+		Header header = new Header("Logout", "Menu Principal", new Login());
         add(header, LEFT, TOP, FILL, DP + 45);
 		cadastrarCliente();
 		ListarTodosClientes();
@@ -38,34 +38,33 @@ public class MenuPrincipal extends Container {
 
 	public void cadastrarCliente() {
 		cadastrarButton = new MethodButton("Cadastrar Cliente");
-		add(cadastrarButton, CENTER, CENTER - 75, comprimento, altura);
-
+		add(cadastrarButton, CENTER, CENTER - 125, comprimento, altura);
 	}
 
 	public void ListarTodosClientes() {
 		buscarTodosButton = new MethodButton("Listar Clientes");
-		add(buscarTodosButton, CENTER, CENTER - 25, comprimento, altura);
+		add(buscarTodosButton, CENTER, CENTER - 75, comprimento, altura);
 	}
 
 	public void atualizarCliente() {
 		atualizarButton = new MethodButton("Atualizar Cliente");
-		add(atualizarButton, CENTER, CENTER + 25, comprimento, altura);
+		add(atualizarButton, CENTER, CENTER - 25, comprimento, altura);
 	}
 
 	public void deletarCliente() {
 		deletarButton = new MethodButton("Deletar Cliente");
-		add(deletarButton, CENTER, CENTER + 75, comprimento, altura);
+		add(deletarButton, CENTER, CENTER + 25, comprimento, altura);
 	}
 
 	public void enviarDados() {
 		enviarDados = new MethodButton("Enviar Sync");
-		add(enviarDados, CENTER, CENTER + 125, comprimento, altura);
+		add(enviarDados, CENTER, CENTER + 75, comprimento, altura);
 		enviarDados.addPressListener(sync.getPressListener(url + "/cliente", HttpStream.POST));
 	}
 
 	public void receberDados() {
 		receberDados = new MethodButton("Receber Sync");
-		add(receberDados, CENTER, CENTER + 175, comprimento, altura);
+		add(receberDados, CENTER, CENTER + 125, comprimento, altura);
 		receberDados.addPressListener(sync.getPressListener(url + "/cliente", HttpStream.GET));
 	}
 

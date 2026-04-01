@@ -18,6 +18,8 @@ public class Cliente {
 
 	private boolean sync = false;
 
+	private boolean deletado = false;
+
 	public Cliente() {
 	}
 
@@ -30,6 +32,14 @@ public class Cliente {
 		this.cnpj = cnpj;
 		this.telefone = telefone;
 		this.email = email;
+	}
+
+	public boolean isDeletado() {
+		return deletado;
+	}
+
+	public void setDeletado(boolean deletado) {
+		this.deletado = deletado;
 	}
 
 	public Long getId() {

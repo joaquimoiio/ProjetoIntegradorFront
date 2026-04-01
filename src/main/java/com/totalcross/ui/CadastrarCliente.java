@@ -12,6 +12,7 @@ import totalcross.ui.ComboBox;
 import totalcross.ui.Container;
 import totalcross.ui.Edit;
 import totalcross.ui.Label;
+import totalcross.ui.MainWindow;
 import totalcross.ui.dialog.MessageBox;
 import totalcross.ui.event.ControlEvent;
 import totalcross.ui.event.Event;
@@ -130,6 +131,9 @@ public class CadastrarCliente extends Container {
 			cliente.setEmail(emailStr);
 
 			service.cadastrarCliente(cliente);
+
+			CadastrarCliente cadastrarCliente = new CadastrarCliente();
+			MainWindow.getMainWindow().swap(cadastrarCliente);
 
 			MessageBox mb = new MessageBox("Atenção!", "Cliente " + nomeStr + " cadastrado com sucesso!");
 			mb.setBackForeColors(Color.WHITE, Color.BLACK);

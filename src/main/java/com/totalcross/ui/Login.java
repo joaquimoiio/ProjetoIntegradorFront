@@ -96,6 +96,6 @@ public class Login extends Container {
 	}
 
 	private boolean verificacaoLogin(String login, String senha) {
-		return login.equals("Administrador") && senha.equals("admin2026@") || true;
+		return login.equals("Administrador") && senha.equals("admin2026@");
 	}
 }

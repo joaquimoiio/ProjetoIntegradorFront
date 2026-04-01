@@ -29,7 +29,8 @@ public class DatabaseManager {
 			stringBuilder.append("cnpj TEXT, ");
 			stringBuilder.append("telefone TEXT NOT NULL, ");
 			stringBuilder.append("email TEXT, ");
-			stringBuilder.append("\"sync\" INTEGER");
+			stringBuilder.append("\"sync\" INTEGER,");
+			stringBuilder.append("\"deletado\" INTEGER");
 			stringBuilder.append(")");
 
 			st.execute(stringBuilder.toString());
