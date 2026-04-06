@@ -7,7 +7,6 @@ import org.json.simple.JSONObject;
 
 import com.totalcross.entity.Cliente;
 import com.totalcross.util.DatabaseManager;
-import com.totalcross.util.SyncCliente;
 import com.totalcross.util.SyncCliente.Response;
 
 import totalcross.io.IOException;
@@ -215,8 +214,8 @@ public class CLIENTEDAO {
 			options.data = jsonCliente.toString();
 			HttpStream http = new HttpStream(new URI(url), options);
 
-			System.out.println("JSON enviado: " + jsonCliente.toString());
-			System.out.println("Response code: " + http.responseCode);
+			System.out.println("enviado: " + jsonCliente.toString());
+			System.out.println("Response: " + http.responseCode);
 
 			if (http.responseCode == 200) {
 				marcarComoSincronizado(cliente);
@@ -301,16 +300,6 @@ public class CLIENTEDAO {
 		ps.executeUpdate();
 		ps.close();
 		dbcon.close();
-	}
-
-
-	public boolean checkClienteExistsWeb(Cliente cliente) {
-		try {
-			return SyncCliente.checkClienteExists(cliente);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 }

@@ -106,7 +106,8 @@ public class ClienteService {
 		Cliente cliente = new Cliente();
 		cliente.setTelefone(telefone);
 
-		if (cliente.getTelefone() == null || cliente.getTelefone().trim().isEmpty()) {
+		if (cliente.getTelefone() == null || cliente.getTelefone().trim().isEmpty()
+				|| cliente.getTelefone().length() <= 10) {
 			throw new IllegalArgumentException("Telefone inválido!");
 		}
 	}

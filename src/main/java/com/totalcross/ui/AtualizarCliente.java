@@ -131,7 +131,9 @@ public class AtualizarCliente extends Container {
 	private void doUpdate() throws InvalidNumberException {
 		try {
 
-			Cliente cliente = service.clienteFinter(idCliente.getValue());
+			long id = idCliente.getValue();
+
+			Cliente cliente = service.clienteFinter(id);
 			String telefoneStr = telefone.getTextWithoutMask();
 			String emailStr = email.getText().trim();
 
@@ -146,7 +148,7 @@ public class AtualizarCliente extends Container {
 			service.atualizarCliente(cliente);
 
 			MessageBox mb = new MessageBox("Atenção!",
-					"Cliente com id:" + idCliente.getValue() + " atualizado com sucesso!");
+					"Cliente com id:" + id + " atualizado com sucesso!");
 			mb.setBackForeColors(Color.WHITE, Color.BLACK);
 			mb.popup();
 

@@ -1,6 +1,6 @@
 package com.totalcross.ui;
 
-import com.totalcross.entity.Cliente;
+import com.totalcross.service.ClienteService;
 import com.totalcross.ui.button.MethodButton;
 import com.totalcross.util.Header;
 import com.totalcross.util.IdCliente;
@@ -17,6 +17,8 @@ public class ListarTodosClientes extends Container {
 	private IdCliente idCliente;
 	private MethodButton btnFiltrar;
 	private ListarClientesComponente listaClientes;
+
+	private ClienteService service = new ClienteService();
 
 	public ListarTodosClientes() {
 
@@ -70,18 +72,12 @@ public class ListarTodosClientes extends Container {
 			break;
 		}
 	}
-	
-	public Cliente clienteFinter() throws InvalidNumberException {
-		Cliente cliente = new Cliente();
-		cliente.setId(idCliente.getValue());
-		return cliente;
-	}
 
 	public void verificarId() throws InvalidNumberException {
 		if (idCliente.getValue() == 0) {
 			listaClientes.carregarClientes();
 		} else {
-			listaClientes.carregarClientesPorId(clienteFinter());
+			listaClientes.carregarClientesPorId(service.clienteFinter(idCliente.getValue()));
 		}
 	}
 
