@@ -125,12 +125,26 @@ public class ListarClientesComponente extends Container {
 
 	private void destacarCard(Container card) {
 		if (cardSelecionado != null) {
-			cardSelecionado.setBackColor(Color.getRGB(230, 230, 230));
-			cardSelecionado.repaint();
+			int corPadrao = Color.getRGB(230, 230, 230);
+			cardSelecionado.setBackColor(corPadrao);
+			totalcross.ui.Control[] filhos = cardSelecionado.getChildren();
+			if (filhos != null) {
+				for (totalcross.ui.Control filho : filhos) {
+					filho.setBackColor(corPadrao);
+				}
+			}
+			cardSelecionado.repaintNow();
 		}
-		card.setBackColor(Color.getRGB(210, 210, 210));
-		card.setBackForeColors(Color.getRGB(210, 210, 210), Color.BLACK);
-		card.repaint();
+
+		int corSelecionado = Color.getRGB(180, 210, 240);
+		card.setBackColor(corSelecionado);
+		totalcross.ui.Control[] filhos = card.getChildren();
+		if (filhos != null) {
+			for (totalcross.ui.Control filho : filhos) {
+				filho.setBackColor(corSelecionado);
+			}
+		}
+		card.repaintNow();
 		cardSelecionado = card;
 	}
 
