@@ -2,6 +2,7 @@ package com.totalcross.entity;
 
 public class Cliente {
 
+	private Long id;
 	private String nomeDoCliente;
 	private String tipoDePessoa;
 	private String cpf;
@@ -22,6 +23,14 @@ public class Cliente {
 		this.cnpj = cnpj;
 		this.telefone = telefone;
 		this.email = email;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getNomeDoCliente() {

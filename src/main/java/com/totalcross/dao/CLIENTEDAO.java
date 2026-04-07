@@ -212,14 +212,22 @@ public class CLIENTEDAO {
 
 		for (Cliente cliente : clientes) {
 			JSONObject jsonCliente = new JSONObject();
+			String cpfValue = (cliente.getCpf() != null && !cliente.getCpf().isEmpty()) ? cliente.getCpf() : null;
+			String cnpjValue = (cliente.getCnpj() != null && !cliente.getCnpj().isEmpty()) ? cliente.getCnpj() : null;
+
 			jsonCliente.put("nomeDoCliente", cliente.getNomeDoCliente());
 			jsonCliente.put("tipoDePessoa", cliente.getTipoDePessoa());
-			jsonCliente.put("cpf", cliente.getCpf() != null ? cliente.getCpf() : "");
-			jsonCliente.put("cnpj", cliente.getCnpj() != null ? cliente.getCnpj() : "");
 			jsonCliente.put("telefone", cliente.getTelefone());
 			jsonCliente.put("email", cliente.getEmail());
 			jsonCliente.put("sync", cliente.isSync());
 			jsonCliente.put("deletado", cliente.isDeletado());
+
+			if (cpfValue != null) {
+				jsonCliente.put("cpf", cpfValue);
+			}
+			if (cnpjValue != null) {
+				jsonCliente.put("cnpj", cnpjValue);
+			}
 
 			options.data = jsonCliente.toString();
 			HttpStream http = new HttpStream(new URI(url), options);
