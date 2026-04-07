@@ -2,52 +2,26 @@ package com.totalcross.entity;
 
 public class Cliente {
 
-	private Long id;
-
 	private String nomeDoCliente;
-
 	private String tipoDePessoa;
-
 	private String cpf;
-
 	private String cnpj;
-
 	private String telefone;
-
 	private String email;
-
 	private boolean sync = false;
-
 	private boolean deletado = false;
 
 	public Cliente() {
 	}
 
-	public Cliente(Long id, String nomeDoCliente, String tipoDePessoa, String cpf, String cnpj, String telefone,
+	public Cliente(String nomeDoCliente, String tipoDePessoa, String cpf, String cnpj, String telefone,
 			String email) {
-		this.id = id;
 		this.nomeDoCliente = nomeDoCliente;
 		this.tipoDePessoa = tipoDePessoa;
 		this.cpf = cpf;
 		this.cnpj = cnpj;
 		this.telefone = telefone;
 		this.email = email;
-	}
-
-	public boolean isDeletado() {
-		return deletado;
-	}
-
-	public void setDeletado(boolean deletado) {
-		this.deletado = deletado;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getNomeDoCliente() {
@@ -106,4 +80,11 @@ public class Cliente {
 		this.sync = sync;
 	}
 
+	public boolean isDeletado() {
+		return deletado;
+	}
+
+	public void setDeletado(boolean deletado) {
+		this.deletado = deletado;
+	}
 }

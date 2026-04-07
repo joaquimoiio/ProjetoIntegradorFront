@@ -10,42 +10,53 @@ import com.totalcross.service.ClienteService;
 import totalcross.ui.Container;
 import totalcross.ui.Label;
 import totalcross.ui.ScrollContainer;
+import totalcross.ui.event.ControlEvent;
+import totalcross.ui.event.Event;
+import totalcross.ui.event.EventHandler;
 import totalcross.ui.gfx.Color;
 
 public class ListarClientesComponente extends Container {
 	private ScrollContainer scrollContainer;
 	private ClienteService service = new ClienteService();
+	private ClienteSelecionadoListener listener;
+
+	public interface ClienteSelecionadoListener {
+		void onClienteSelecionado(Cliente cliente);
+	}
+
+	public void setClienteSelecionadoListener(ClienteSelecionadoListener listener) {
+		this.listener = listener;
+	}
 
 	@Override
 	public void initUI() {
 		scrollContainer = new ScrollContainer(false, true);
 		scrollContainer.setBackColor(Color.WHITE);
 		add(scrollContainer, LEFT, TOP, FILL, FILL);
-
 	}
 
-	public void carregarClientesPorId(Cliente id) {
+	public void carregarClientePorDocumento(String documento) {
 		try {
 			limparLista();
-			service.validarId(id);
 			CLIENTEDAO dao = new CLIENTEDAO();
-			Cliente cliente = dao.buscarClientePorId(id);
+			Cliente cliente = dao.buscarClientePorDocumento(documento);
+
+			if (cliente == null) {
+				new ErroBox("Atenção!", "Cliente não encontrado!", new String[] { "Voltar" }).popup();
+				carregarClientes();
+				return;
+			}
 
 			Container card = criarCard(cliente);
 			scrollContainer.add(card, LEFT + 5, AFTER + 5, FILL - 5, DP + 70);
 
-		} catch (IllegalArgumentException e) {
-			new ErroBox("Atenção!", e.getMessage(), new String[] { "Voltar" }).popup();
-			carregarClientes();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			Label erroLabel = new Label("Erro ao carregar clientes.");
+			Label erroLabel = new Label("Erro ao carregar cliente.");
 			erroLabel.setForeColor(Color.RED);
 			scrollContainer.add(erroLabel, LEFT + 10, AFTER + 5);
 		}
 	}
-	
-
 
 	public void carregarClientes() {
 		limparLista();
@@ -66,53 +77,57 @@ public class ListarClientesComponente extends Container {
 		}
 	}
 
-	private Container criarCard(Cliente nomeCliente) {
+	private Container criarCard(Cliente clienteData) {
+		final Cliente clienteRef = clienteData;
+
 		Container card = new Container() {
+			@Override
+			public <H extends EventHandler> void onEvent(Event<H> event) {
+				super.onEvent(event);
+				if (event.type == ControlEvent.PRESSED) {
+					if (listener != null) {
+						listener.onClienteSelecionado(clienteRef);
+					}
+				}
+			}
 		};
 		card.setRect(0, 0, scrollContainer.getWidth() - 7, DP + 160);
 
-		Label idLabel = new Label("Id: " + nomeCliente.getId());
-		idLabel.setForeColor(Color.BLACK);
-		card.add(idLabel, LEFT + 3, TOP + 3);
-
-		Label nomeLabel = new Label("Nome: " + nomeCliente.getNomeDoCliente());
+		Label nomeLabel = new Label("Nome: " + clienteData.getNomeDoCliente());
 		nomeLabel.setForeColor(Color.BLACK);
-		card.add(nomeLabel, LEFT + 3, AFTER + 3);
+		card.add(nomeLabel, LEFT + 3, TOP + 3);
 
-		if ("FISICA".equals(nomeCliente.getTipoDePessoa())) {
-			Label fisicaLabel = new Label("Pessoa: " + nomeCliente.getTipoDePessoa());
-			fisicaLabel.setForeColor(Color.BLACK);
-			card.add(fisicaLabel, LEFT + 3, AFTER + 3);
+		if ("FISICA".equals(clienteData.getTipoDePessoa())) {
+			Label tipoLabel = new Label("Pessoa: FISICA");
+			tipoLabel.setForeColor(Color.BLACK);
+			card.add(tipoLabel, LEFT + 3, AFTER + 3);
+
+			Label cpfLabel = new Label("CPF: " + clienteData.getCpf());
+			cpfLabel.setForeColor(Color.BLACK);
+			card.add(cpfLabel, LEFT + 3, AFTER + 3);
 		} else {
-			Label juridicaLabel = new Label("Pessoa: " + nomeCliente.getTipoDePessoa());
-			juridicaLabel.setForeColor(Color.BLACK);
-			card.add(juridicaLabel, LEFT + 3, AFTER + 3);
+			Label tipoLabel = new Label("Pessoa: JURIDICA");
+			tipoLabel.setForeColor(Color.BLACK);
+			card.add(tipoLabel, LEFT + 3, AFTER + 3);
+
+			Label cnpjLabel = new Label("CNPJ: " + clienteData.getCnpj());
+			cnpjLabel.setForeColor(Color.BLACK);
+			card.add(cnpjLabel, LEFT + 3, AFTER + 3);
 		}
 
-		Label telefoneLabel = new Label("Telefone: " + nomeCliente.getTelefone());
+		Label telefoneLabel = new Label("Telefone: " + clienteData.getTelefone());
 		telefoneLabel.setForeColor(Color.BLACK);
 		card.add(telefoneLabel, RIGHT - 3, TOP + 3);
 
-		Label emailLabel = new Label("Email: " + nomeCliente.getEmail());
+		Label emailLabel = new Label("Email: " + clienteData.getEmail());
 		emailLabel.setForeColor(Color.BLACK);
 		card.add(emailLabel, RIGHT - 3, AFTER + 3);
 
-		if ("FISICA".equals(nomeCliente.getTipoDePessoa())) {
-			Label cpfLabel = new Label("Cpf: " + nomeCliente.getCpf());
-			cpfLabel.setForeColor(Color.BLACK);
-			card.add(cpfLabel, RIGHT - 3, AFTER + 3);
-		} else {
-			Label cnpjLabel = new Label("Cnpj: " + nomeCliente.getCnpj());
-			cnpjLabel.setForeColor(Color.BLACK);
-			card.add(cnpjLabel, RIGHT - 3, AFTER + 3);
-		}
-
 		return card;
 	}
-	
+
 	public void limparLista() {
 		scrollContainer.removeAll();
 		scrollContainer.reposition();
 	}
-	
 }

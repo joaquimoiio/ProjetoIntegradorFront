@@ -37,9 +37,8 @@ public class ClienteService {
 			}
 		}
 
-		telefone(cliente.getTelefone());
-
-		email(cliente.getEmail());
+		validarTelefone(cliente.getTelefone());
+		validarEmail(cliente.getEmail());
 	}
 
 	private static boolean validarCPF(String cpf) {
@@ -101,29 +100,16 @@ public class ClienteService {
 		}
 	}
 
-	private void telefone(String telefone) {
-
-		Cliente cliente = new Cliente();
-		cliente.setTelefone(telefone);
-
-		if (cliente.getTelefone() == null || cliente.getTelefone().trim().isEmpty()
-				|| cliente.getTelefone().length() <= 10) {
+	private void validarTelefone(String telefone) {
+		if (telefone == null || telefone.trim().isEmpty() || telefone.length() <= 10) {
 			throw new IllegalArgumentException("Telefone inválido!");
 		}
 	}
 
-	private void email(String email) {
-
-		Cliente cliente = new Cliente();
-		cliente.setEmail(email);
-
-		if (!validarEmail(cliente.getEmail()) && !cliente.getEmail().isEmpty()) {
+	private void validarEmail(String email) {
+		if (email != null && !email.isEmpty() && !email.contains("@")) {
 			throw new IllegalArgumentException("Email inválido!");
 		}
-	}
-
-	private boolean validarEmail(String texto) {
-		return texto.contains("@") && texto.contains(".");
 	}
 
 	private boolean existeCpf(Cliente cpf) throws SQLException {
@@ -134,16 +120,10 @@ public class ClienteService {
 		return dao.cnpj(cliente);
 	}
 
-	public void validarId(Cliente cliente) throws SQLException {
-		if (!dao.existeId(cliente)) {
-			throw new IllegalArgumentException("Id inexistente!");
+	public void validarDocumento(Cliente cliente) throws SQLException {
+		if (!dao.existeDocumento(cliente)) {
+			throw new IllegalArgumentException("Cliente não encontrado!");
 		}
-	}
-
-	public Cliente clienteFinter(Long id) {
-		Cliente cliente = new Cliente();
-		cliente.setId(id);
-		return cliente;
 	}
 
 	public void cadastrarCliente(Cliente cliente) throws SQLException {
@@ -152,16 +132,15 @@ public class ClienteService {
 	}
 
 	public void atualizarCliente(Cliente cliente) throws SQLException {
-		validarId(cliente);
-		telefone(cliente.getTelefone());
-		email(cliente.getEmail());
+		validarDocumento(cliente);
+		validarTelefone(cliente.getTelefone());
+		validarEmail(cliente.getEmail());
 		dao.atualizarCliente(cliente);
 	}
 
 	public void deletarCliente(Cliente cliente) throws SQLException {
-		validarId(cliente);
+		validarDocumento(cliente);
 		dao.deletarCliente(cliente);
 	}
-
 
 }

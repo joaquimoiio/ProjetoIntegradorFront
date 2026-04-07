@@ -72,36 +72,4 @@ public class SyncCliente {
 		public int responseCode;
 	}
 
-	public static boolean checkClienteExists(Cliente cliente) {
-		String cpf = cliente.getCpf() != null ? cliente.getCpf() : "null";
-		String cnpj = cliente.getCnpj() != null ? cliente.getCnpj() : "null";
-
-		String url = "http://localhost:8080/sync/cliente/exists/" + cpf + "/" + cnpj;
-
-		HttpStream httpStream = null;
-		HttpStream.Options options = new HttpStream.Options();
-		options.httpType = HttpStream.GET;
-
-		try {
-			httpStream = new HttpStream(new URI(url), options);
-			String response = httpStream.readLine();
-			return "true".equals(response);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return false;
-		} finally {
-			if (httpStream != null) {
-				try {
-					httpStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-
-
-
-
 }

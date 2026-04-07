@@ -1,12 +1,10 @@
 package com.totalcross.ui;
 
-import com.totalcross.service.ClienteService;
 import com.totalcross.ui.button.MethodButton;
+import com.totalcross.util.DocumentoCliente;
 import com.totalcross.util.Header;
-import com.totalcross.util.IdCliente;
 import com.totalcross.util.ListarClientesComponente;
 
-import totalcross.sys.InvalidNumberException;
 import totalcross.ui.Container;
 import totalcross.ui.event.ControlEvent;
 import totalcross.ui.event.Event;
@@ -14,14 +12,11 @@ import totalcross.ui.event.EventHandler;
 
 public class ListarTodosClientes extends Container {
 
-	private IdCliente idCliente;
+	private DocumentoCliente documentoCliente;
 	private MethodButton btnFiltrar;
 	private ListarClientesComponente listaClientes;
 
-	private ClienteService service = new ClienteService();
-
 	public ListarTodosClientes() {
-
 	}
 
 	public int getLeft() {
@@ -33,20 +28,15 @@ public class ListarTodosClientes extends Container {
 		Header header = new Header("<", "Listar clientes", new MenuPrincipal());
 		add(header, LEFT, TOP, FILL, DP + 40);
 
-		idCliente = new IdCliente("Digite o id do Cliente para filtrar:");
-		add(idCliente, LEFT, AFTER + 10, FILL, PARENTSIZE + 9);
+		documentoCliente = new DocumentoCliente("Digite CPF/CNPJ para filtrar:");
+		add(documentoCliente, LEFT, AFTER + 10, FILL, PARENTSIZE + 9);
 
 		listaClientes = new ListarClientesComponente();
 		add(listaClientes, LEFT + 10, AFTER + 10, FILL - 10, FILL - 65);
 
-		try {
-			verificarId();
-		} catch (InvalidNumberException e) {
-			e.printStackTrace();
-		}
+		listaClientes.carregarClientes();
 
 		botaoFiltrar();
-
 	}
 
 	public void botaoFiltrar() {
@@ -59,28 +49,18 @@ public class ListarTodosClientes extends Container {
 		switch (event.type) {
 		case ControlEvent.PRESSED:
 			if (event.target == btnFiltrar) {
-				try {
-					verificarId();
-				} catch (InvalidNumberException e) {
-					e.printStackTrace();
+				String doc = documentoCliente.getValue();
+				if (doc.isEmpty()) {
+					listaClientes.carregarClientes();
+				} else {
+					listaClientes.carregarClientePorDocumento(doc);
 				}
 			}
-
 			break;
 
 		default:
 			break;
 		}
 	}
-
-	public void verificarId() throws InvalidNumberException {
-		if (idCliente.getValue() == 0) {
-			listaClientes.carregarClientes();
-		} else {
-			listaClientes.carregarClientesPorId(service.clienteFinter(idCliente.getValue()));
-		}
-	}
-
-
 
 }

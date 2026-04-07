@@ -117,8 +117,18 @@ public class CadastrarCliente extends Container {
 		try {
 			String nomeStr = nome.getTextWithoutMask();
 			String tipoStr = tipoDePessoa.getSelectedIndex() == 0 ? "FISICA" : "JURIDICA";
-			String cpfStr = cpf.getTextWithoutMask();
-			String cnpjStr = cnpj != null ? cnpj.getTextWithoutMask() : "";
+
+			String cpfStr = "";
+			String cnpjStr = "";
+
+			if ("FISICA".equals(tipoStr)) {
+				cpfStr = cpf != null ? cpf.getTextWithoutMask() : "";
+				cnpjStr = "";
+			} else {
+				cnpjStr = cnpj != null ? cnpj.getTextWithoutMask() : "";
+				cpfStr = "";
+			}
+
 			String telefoneStr = telefone.getTextWithoutMask();
 			String emailStr = email.getText().trim();
 
