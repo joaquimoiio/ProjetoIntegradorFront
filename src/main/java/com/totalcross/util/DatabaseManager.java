@@ -22,15 +22,14 @@ public class DatabaseManager {
 			StringBuilder stringBuilder = new StringBuilder();
 
 			stringBuilder.append("CREATE TABLE IF NOT EXISTS person (");
-			stringBuilder.append("id INTEGER PRIMARY KEY AUTOINCREMENT, ");
 			stringBuilder.append("nomeDoCliente TEXT NOT NULL, ");
 			stringBuilder.append("tipoDePessoa TEXT NOT NULL, ");
 			stringBuilder.append("cpf TEXT, ");
 			stringBuilder.append("cnpj TEXT, ");
 			stringBuilder.append("telefone TEXT NOT NULL, ");
 			stringBuilder.append("email TEXT, ");
-			stringBuilder.append("\"sync\" INTEGER,");
-			stringBuilder.append("\"deletado\" INTEGER");
+			stringBuilder.append("sync INTEGER, ");
+			stringBuilder.append("deletado INTEGER");
 			stringBuilder.append(")");
 
 			st.execute(stringBuilder.toString());

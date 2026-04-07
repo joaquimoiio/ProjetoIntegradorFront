@@ -15,8 +15,8 @@ public class MenuPrincipal extends Container {
 
 	private MethodButton cadastrarButton, buscarTodosButton, atualizarButton, deletarButton, enviarDados, receberDados;
 
-	private static int comprimento = 175;
-	private static int altura = 40;
+	private static int comprimento = 90;
+	private static int altura = 70;
 
 	private SyncCliente sync = new SyncCliente();
 
@@ -37,34 +37,34 @@ public class MenuPrincipal extends Container {
 	}
 
 	public void cadastrarCliente() {
-		cadastrarButton = new MethodButton("Cadastrar Cliente");
-		add(cadastrarButton, CENTER, CENTER - 125, comprimento, altura);
+		cadastrarButton = new MethodButton("Cadastrar\n Cliente");
+		add(cadastrarButton, BEFORE + 100, CENTER - 125, comprimento, altura);
 	}
 
 	public void ListarTodosClientes() {
-		buscarTodosButton = new MethodButton("Listar Clientes");
-		add(buscarTodosButton, CENTER, CENTER - 75, comprimento, altura);
+		buscarTodosButton = new MethodButton("Listar\n Clientes");
+		add(buscarTodosButton, CENTER, CENTER - 125, comprimento, altura);
 	}
 
 	public void atualizarCliente() {
-		atualizarButton = new MethodButton("Atualizar Cliente");
-		add(atualizarButton, CENTER, CENTER - 25, comprimento, altura);
+		atualizarButton = new MethodButton("Atualizar\n Cliente");
+		add(atualizarButton, AFTER + 15, CENTER - 125, comprimento, altura);
 	}
 
 	public void deletarCliente() {
-		deletarButton = new MethodButton("Deletar Cliente");
-		add(deletarButton, CENTER, CENTER + 25, comprimento, altura);
+		deletarButton = new MethodButton("Deletar\n Cliente");
+		add(deletarButton, BEFORE - 120, CENTER - 15, comprimento, altura);
 	}
 
 	public void enviarDados() {
-		enviarDados = new MethodButton("Enviar Sync");
-		add(enviarDados, CENTER, CENTER + 75, comprimento, altura);
+		enviarDados = new MethodButton("Enviar\n Sync");
+		add(enviarDados, CENTER, CENTER - 15, comprimento, altura);
 		enviarDados.addPressListener(sync.getPressListener(url + "/cliente", HttpStream.POST));
 	}
 
 	public void receberDados() {
-		receberDados = new MethodButton("Receber Sync");
-		add(receberDados, CENTER, CENTER + 125, comprimento, altura);
+		receberDados = new MethodButton("Receber\n Sync");
+		add(receberDados, AFTER + 15, CENTER - 15, comprimento, altura);
 		receberDados.addPressListener(sync.getPressListener(url + "/cliente", HttpStream.GET));
 	}
 

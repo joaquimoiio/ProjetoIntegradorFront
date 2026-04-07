@@ -101,12 +101,20 @@ public class CLIENTEDAO {
 	public void deletarCliente(Cliente cliente) throws SQLException {
 
 		Connection dbcon = DatabaseManager.getConnection();
-		PreparedStatement ps = dbcon.prepareStatement(
-				"UPDATE person SET sync = ?, deletado = ? WHERE cpf = ? OR cnpj = ?");
-		ps.setBoolean(1, false);
-		ps.setBoolean(2, true);
-		ps.setString(3, cliente.getCpf() != null ? cliente.getCpf() : "");
-		ps.setString(4, cliente.getCnpj() != null ? cliente.getCnpj() : "");
+		PreparedStatement ps;
+
+		if ("FISICA".equals(cliente.getTipoDePessoa())) {
+			ps = dbcon.prepareStatement("UPDATE person SET sync = ?, deletado = ? WHERE cpf = ?");
+			ps.setBoolean(1, false);
+			ps.setBoolean(2, true);
+			ps.setString(3, cliente.getCpf());
+		} else {
+			ps = dbcon.prepareStatement("UPDATE person SET sync = ?, deletado = ? WHERE cnpj = ?");
+			ps.setBoolean(1, false);
+			ps.setBoolean(2, true);
+			ps.setString(3, cliente.getCnpj());
+		}
+
 		ps.executeUpdate();
 		ps.close();
 		dbcon.close();
@@ -115,16 +123,23 @@ public class CLIENTEDAO {
 	public void atualizarCliente(Cliente cliente) throws SQLException {
 
 		Connection dbcon = DatabaseManager.getConnection();
-		PreparedStatement ps = dbcon.prepareStatement(
-				"UPDATE person SET telefone = ?, email = ?, sync = ? WHERE cpf = ? OR cnpj = ?");
-		ps.setString(1, cliente.getTelefone());
-		ps.setString(2, cliente.getEmail());
-		ps.setBoolean(3, false);
-		ps.setString(4, cliente.getCpf() != null ? cliente.getCpf() : "");
-		ps.setString(5, cliente.getCnpj() != null ? cliente.getCnpj() : "");
+		PreparedStatement ps;
+
+		if ("FISICA".equals(cliente.getTipoDePessoa())) {
+			ps = dbcon.prepareStatement("UPDATE person SET telefone = ?, email = ?, sync = ? WHERE cpf = ?");
+			ps.setString(1, cliente.getTelefone());
+			ps.setString(2, cliente.getEmail());
+			ps.setBoolean(3, false);
+			ps.setString(4, cliente.getCpf());
+		} else {
+			ps = dbcon.prepareStatement("UPDATE person SET telefone = ?, email = ?, sync = ? WHERE cnpj = ?");
+			ps.setString(1, cliente.getTelefone());
+			ps.setString(2, cliente.getEmail());
+			ps.setBoolean(3, false);
+			ps.setString(4, cliente.getCnpj());
+		}
 
 		ps.executeUpdate();
-
 		ps.close();
 		dbcon.close();
 	}
@@ -278,11 +293,18 @@ public class CLIENTEDAO {
 	public void marcarComoSincronizado(Cliente cliente) throws SQLException {
 
 		Connection dbcon = DatabaseManager.getConnection();
-		PreparedStatement ps = dbcon.prepareStatement(
-				"UPDATE person SET sync = ? WHERE cpf = ? OR cnpj = ?");
-		ps.setBoolean(1, true);
-		ps.setString(2, cliente.getCpf() != null ? cliente.getCpf() : "");
-		ps.setString(3, cliente.getCnpj() != null ? cliente.getCnpj() : "");
+		PreparedStatement ps;
+
+		if ("FISICA".equals(cliente.getTipoDePessoa())) {
+			ps = dbcon.prepareStatement("UPDATE person SET sync = ? WHERE cpf = ?");
+			ps.setBoolean(1, true);
+			ps.setString(2, cliente.getCpf());
+		} else {
+			ps = dbcon.prepareStatement("UPDATE person SET sync = ? WHERE cnpj = ?");
+			ps.setBoolean(1, true);
+			ps.setString(2, cliente.getCnpj());
+		}
+
 		ps.executeUpdate();
 		ps.close();
 		dbcon.close();

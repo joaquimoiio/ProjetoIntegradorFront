@@ -22,7 +22,7 @@ import totalcross.ui.gfx.Color;
 
 public class AtualizarCliente extends Container {
 
-	private Edit email, telefone;
+	private Edit email, telefone, edtCpfCnpj;
 
 	private MethodButton btnAtualizar, btnBuscar;
 
@@ -44,30 +44,16 @@ public class AtualizarCliente extends Container {
 		Header header = new Header("<", "Atualizar cliente", new MenuPrincipal());
 		add(header, LEFT, TOP, FILL, DP + 40);
 
-		documentoCliente = new DocumentoCliente("Digite CPF/CNPJ para buscar:");
-		add(documentoCliente, LEFT, AFTER + 10, FILL, PARENTSIZE + 9);
-
+		campoCpfCnpj();
 		botaoBuscar();
-
-		listaClientes = new ListarClientesComponente();
-
-		listaClientes.setClienteSelecionadoListener(new ListarClientesComponente.ClienteSelecionadoListener() {
-			@Override
-			public void onClienteSelecionado(Cliente cliente) {
-				clienteSelecionado = cliente;
-				telefone.setText(cliente.getTelefone() != null ? cliente.getTelefone() : "");
-				email.setText(cliente.getEmail() != null ? cliente.getEmail() : "");
-			}
-		});
-
-		add(listaClientes, LEFT + 10, AFTER + 10, FILL - 10, PARENTSIZE + 35);
-		listaClientes.carregarClientes();
-
+		inicializarLista();
 		atualizarTelefone();
 		atualizarEmail();
 		botaoAtualizar();
-
+		registrarListenerLista();
 	}
+
+
 
 	public int getLeft() {
 		return LEFT + 30;
@@ -115,6 +101,10 @@ public class AtualizarCliente extends Container {
 		try {
 			String doc = documentoCliente.getValue();
 			if (doc.isEmpty()) {
+				listaClientes.limparLista();
+				telefone.setText("");
+				email.setText("");
+				listaClientes.carregarClientes();
 				return;
 			}
 
@@ -135,6 +125,34 @@ public class AtualizarCliente extends Container {
 		} catch (SQLException e) {
 			new ErroBox("Erro", "Erro ao buscar cliente!", new String[] { "Voltar" }).popup();
 		}
+	}
+
+	private void campoCpfCnpj() {
+		documentoCliente = new DocumentoCliente("Digite CPF/CNPJ para deletar:");
+		add(documentoCliente, LEFT, AFTER + 10, FILL, PARENTSIZE + 9);
+	}
+
+	private void inicializarLista() {
+		listaClientes = new ListarClientesComponente();
+		add(listaClientes, LEFT + 10, AFTER + 10, FILL - 10, PARENTSIZE + 35);
+		listaClientes.carregarClientes();
+	}
+
+	private void registrarListenerLista() {
+		listaClientes.setClienteSelecionadoListener(new ListarClientesComponente.ClienteSelecionadoListener() {
+		    @Override
+		    public void onClienteSelecionado(Cliente cliente) {
+		        clienteSelecionado = cliente;
+		        telefone.setText(cliente.getTelefone() != null ? cliente.getTelefone() : "");
+		        email.setText(cliente.getEmail() != null ? cliente.getEmail() : "");
+
+		        if ("FISICA".equals(cliente.getTipoDePessoa())) {
+		            documentoCliente.setValue(cliente.getCpf());
+		        } else {
+		            documentoCliente.setValue(cliente.getCnpj());
+		        }
+		    }
+		});
 	}
 
 	private void doUpdate() {

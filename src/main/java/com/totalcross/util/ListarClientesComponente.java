@@ -5,19 +5,15 @@ import java.util.List;
 
 import com.totalcross.dao.CLIENTEDAO;
 import com.totalcross.entity.Cliente;
-import com.totalcross.service.ClienteService;
 
+import totalcross.ui.Button;
 import totalcross.ui.Container;
 import totalcross.ui.Label;
 import totalcross.ui.ScrollContainer;
-import totalcross.ui.event.ControlEvent;
-import totalcross.ui.event.Event;
-import totalcross.ui.event.EventHandler;
 import totalcross.ui.gfx.Color;
 
 public class ListarClientesComponente extends Container {
 	private ScrollContainer scrollContainer;
-	private ClienteService service = new ClienteService();
 	private ClienteSelecionadoListener listener;
 
 	public interface ClienteSelecionadoListener {
@@ -40,16 +36,14 @@ public class ListarClientesComponente extends Container {
 			limparLista();
 			CLIENTEDAO dao = new CLIENTEDAO();
 			Cliente cliente = dao.buscarClientePorDocumento(documento);
-
 			if (cliente == null) {
 				new ErroBox("Atenção!", "Cliente não encontrado!", new String[] { "Voltar" }).popup();
 				carregarClientes();
 				return;
 			}
-
 			Container card = criarCard(cliente);
 			scrollContainer.add(card, LEFT + 5, AFTER + 5, FILL - 5, DP + 70);
-
+			preencherCard(card, cliente);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			Label erroLabel = new Label("Erro ao carregar cliente.");
@@ -63,12 +57,11 @@ public class ListarClientesComponente extends Container {
 		try {
 			CLIENTEDAO dao = new CLIENTEDAO();
 			List<Cliente> clientes = dao.buscarTodosClientes();
-
 			for (Cliente cliente : clientes) {
 				Container card = criarCard(cliente);
 				scrollContainer.add(card, LEFT + 5, AFTER + 5, FILL - 5, DP + 70);
+				preencherCard(card, cliente);
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 			Label erroLabel = new Label("Erro ao carregar clientes.");
@@ -77,22 +70,14 @@ public class ListarClientesComponente extends Container {
 		}
 	}
 
-	private Container criarCard(Cliente clienteData) {
-		final Cliente clienteRef = clienteData;
+	private Container criarCard(Cliente cliente) {
+		final Cliente clienteRef = cliente;
+		Container card = new Container();
+		card.setBackColor(Color.getRGB(230, 230, 230));
+		return card;
+	}
 
-		Container card = new Container() {
-			@Override
-			public <H extends EventHandler> void onEvent(Event<H> event) {
-				super.onEvent(event);
-				if (event.type == ControlEvent.PRESSED) {
-					if (listener != null) {
-						listener.onClienteSelecionado(clienteRef);
-					}
-				}
-			}
-		};
-		card.setRect(0, 0, scrollContainer.getWidth() - 7, DP + 160);
-
+	private void preencherCard(Container card, Cliente clienteData) {
 		Label nomeLabel = new Label("Nome: " + clienteData.getNomeDoCliente());
 		nomeLabel.setForeColor(Color.BLACK);
 		card.add(nomeLabel, LEFT + 3, TOP + 3);
@@ -123,7 +108,30 @@ public class ListarClientesComponente extends Container {
 		emailLabel.setForeColor(Color.BLACK);
 		card.add(emailLabel, RIGHT - 3, AFTER + 3);
 
-		return card;
+		Button btnCard = new Button("");
+		btnCard.transparentBackground = true;
+		btnCard.setBorder(Button.BORDER_NONE);
+		card.add(btnCard, LEFT, TOP, FILL, FILL);
+
+		btnCard.addPressListener((e) -> {
+			if (listener != null) {
+				listener.onClienteSelecionado(clienteData);
+			}
+			destacarCard(card);
+		});
+	}
+
+	private Container cardSelecionado = null;
+
+	private void destacarCard(Container card) {
+		if (cardSelecionado != null) {
+			cardSelecionado.setBackColor(Color.getRGB(230, 230, 230));
+			cardSelecionado.repaint();
+		}
+		card.setBackColor(Color.getRGB(210, 210, 210));
+		card.setBackForeColors(Color.getRGB(210, 210, 210), Color.BLACK);
+		card.repaint();
+		cardSelecionado = card;
 	}
 
 	public void limparLista() {

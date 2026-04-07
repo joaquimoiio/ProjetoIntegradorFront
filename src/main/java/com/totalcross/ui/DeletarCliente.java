@@ -56,12 +56,28 @@ public class DeletarCliente extends Container {
 		add(listaClientes, LEFT + 10, AFTER + 10, FILL - 10, FILL - 65);
 		listaClientes.carregarClientes();
 
+		registrarListenerLista();
+
 		botaoDeletar();
 	}
 
 	public void botaoDeletar() {
 		btnDeletar = new MethodButton("Deletar");
 		add(btnDeletar, RIGHT - 30, AFTER + 10, DP + 75, DP + 35);
+	}
+
+	private void registrarListenerLista() {
+		listaClientes.setClienteSelecionadoListener(new ListarClientesComponente.ClienteSelecionadoListener() {
+			@Override
+			public void onClienteSelecionado(Cliente cliente) {
+				clienteSelecionado = cliente;
+				if ("FISICA".equals(cliente.getTipoDePessoa())) {
+					documentoCliente.setValue(cliente.getCpf());
+				} else {
+					documentoCliente.setValue(cliente.getCnpj());
+				}
+			}
+		});
 	}
 
 	@Override

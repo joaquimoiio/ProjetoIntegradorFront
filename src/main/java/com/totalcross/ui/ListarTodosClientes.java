@@ -1,5 +1,6 @@
 package com.totalcross.ui;
 
+import com.totalcross.entity.Cliente;
 import com.totalcross.ui.button.MethodButton;
 import com.totalcross.util.DocumentoCliente;
 import com.totalcross.util.Header;
@@ -15,6 +16,7 @@ public class ListarTodosClientes extends Container {
 	private DocumentoCliente documentoCliente;
 	private MethodButton btnFiltrar;
 	private ListarClientesComponente listaClientes;
+	private Cliente clienteSelecionado = null;
 
 	public ListarTodosClientes() {
 	}
@@ -37,11 +39,27 @@ public class ListarTodosClientes extends Container {
 		listaClientes.carregarClientes();
 
 		botaoFiltrar();
+		registrarListenerLista();
 	}
 
 	public void botaoFiltrar() {
 		btnFiltrar = new MethodButton("Filtrar");
 		add(btnFiltrar, RIGHT - 30, AFTER + 10, DP + 75, DP + 35);
+	}
+
+
+	private void registrarListenerLista() {
+		listaClientes.setClienteSelecionadoListener(new ListarClientesComponente.ClienteSelecionadoListener() {
+			@Override
+			public void onClienteSelecionado(Cliente cliente) {
+				clienteSelecionado = cliente;
+				if ("FISICA".equals(cliente.getTipoDePessoa())) {
+					documentoCliente.setValue(cliente.getCpf());
+				} else {
+					documentoCliente.setValue(cliente.getCnpj());
+				}
+			}
+		});
 	}
 
 	public <H extends EventHandler> void onEvent(Event<H> event) {
