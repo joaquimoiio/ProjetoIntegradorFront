@@ -310,4 +310,51 @@ public class CLIENTEDAO {
 		dbcon.close();
 	}
 
+	public boolean reativarSeExisteDeletado(Cliente cliente) throws SQLException {
+		Connection dbcon = DatabaseManager.getConnection();
+		PreparedStatement ps;
+
+		if ("FISICA".equals(cliente.getTipoDePessoa())) {
+			ps = dbcon.prepareStatement("SELECT * FROM person WHERE cpf = ? AND deletado = 1");
+			ps.setString(1, cliente.getCpf());
+		} else {
+			ps = dbcon.prepareStatement("SELECT * FROM person WHERE cnpj = ? AND deletado = 1");
+			ps.setString(1, cliente.getCnpj());
+		}
+
+		ResultSet rs = ps.executeQuery();
+		boolean existeDeletado = rs.next();
+
+		if (existeDeletado) {
+			rs.close();
+			ps.close();
+
+			PreparedStatement psUpdate;
+			if ("FISICA".equals(cliente.getTipoDePessoa())) {
+				psUpdate = dbcon.prepareStatement(
+						"UPDATE person SET nomeDoCliente = ?, telefone = ?, email = ?, sync = ?, deletado = 0 WHERE cpf = ?");
+				psUpdate.setString(1, cliente.getNomeDoCliente());
+				psUpdate.setString(2, cliente.getTelefone());
+				psUpdate.setString(3, cliente.getEmail());
+				psUpdate.setBoolean(4, false);
+				psUpdate.setString(5, cliente.getCpf());
+			} else {
+				psUpdate = dbcon.prepareStatement(
+						"UPDATE person SET nomeDoCliente = ?, telefone = ?, email = ?, sync = ?, deletado = 0 WHERE cnpj = ?");
+				psUpdate.setString(1, cliente.getNomeDoCliente());
+				psUpdate.setString(2, cliente.getTelefone());
+				psUpdate.setString(3, cliente.getEmail());
+				psUpdate.setBoolean(4, false);
+				psUpdate.setString(5, cliente.getCnpj());
+			}
+			psUpdate.executeUpdate();
+			psUpdate.close();
+		}
+
+		rs.close();
+		ps.close();
+		dbcon.close();
+		return existeDeletado;
+	}
+
 }

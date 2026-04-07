@@ -128,7 +128,9 @@ public class ClienteService {
 
 	public void cadastrarCliente(Cliente cliente) throws SQLException {
 		validarCliente(cliente);
-		dao.insertCliente(cliente);
+		if (!dao.reativarSeExisteDeletado(cliente)) {
+			dao.insertCliente(cliente);
+		}
 	}
 
 	public void atualizarCliente(Cliente cliente) throws SQLException {
