@@ -87,7 +87,7 @@ public class ListarClientesComponente extends Container {
 			tipoLabel.setForeColor(Color.BLACK);
 			card.add(tipoLabel, LEFT + 3, AFTER + 3);
 
-			Label cpfLabel = new Label("CPF: " + clienteData.getCpf());
+			Label cpfLabel = new Label("CPF: " + (clienteData.getCpf() != null ? clienteData.getCpf() : ""));
 			cpfLabel.setForeColor(Color.BLACK);
 			card.add(cpfLabel, LEFT + 3, AFTER + 3);
 		} else {
@@ -95,7 +95,7 @@ public class ListarClientesComponente extends Container {
 			tipoLabel.setForeColor(Color.BLACK);
 			card.add(tipoLabel, LEFT + 3, AFTER + 3);
 
-			Label cnpjLabel = new Label("CNPJ: " + clienteData.getCnpj());
+			Label cnpjLabel = new Label("CNPJ: " + (clienteData.getCnpj() != null ? clienteData.getCnpj() : ""));
 			cnpjLabel.setForeColor(Color.BLACK);
 			card.add(cnpjLabel, LEFT + 3, AFTER + 3);
 		}

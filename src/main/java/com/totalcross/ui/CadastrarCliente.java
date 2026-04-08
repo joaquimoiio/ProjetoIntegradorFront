@@ -122,11 +122,11 @@ public class CadastrarCliente extends Container {
 			String cnpjStr = "";
 
 			if ("FISICA".equals(tipoStr)) {
-				cpfStr = cpf != null ? cpf.getTextWithoutMask() : "";
-				cnpjStr = "";
+				cpfStr = cpf != null ? cpf.getTextWithoutMask() : null;
+				cnpjStr = null;
 			} else {
-				cnpjStr = cnpj != null ? cnpj.getTextWithoutMask() : "";
-				cpfStr = "";
+				cnpjStr = cnpj != null ? cnpj.getTextWithoutMask() : null;
+				cpfStr = null;
 			}
 
 			String telefoneStr = telefone.getTextWithoutMask();

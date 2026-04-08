@@ -333,10 +333,10 @@ public class CLIENTEDAO {
 		ResultSet rs = ps.executeQuery();
 		boolean existeDeletado = rs.next();
 
-		if (existeDeletado) {
-			rs.close();
-			ps.close();
+		rs.close();
+		ps.close();
 
+		if (existeDeletado) {
 			PreparedStatement psUpdate;
 			if ("FISICA".equals(cliente.getTipoDePessoa())) {
 				psUpdate = dbcon.prepareStatement(
@@ -359,8 +359,6 @@ public class CLIENTEDAO {
 			psUpdate.close();
 		}
 
-		rs.close();
-		ps.close();
 		dbcon.close();
 		return existeDeletado;
 	}
