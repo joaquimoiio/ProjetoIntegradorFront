@@ -16,7 +16,7 @@ import totalcross.ui.event.PressListener;
 
 public class SyncCliente {
 
-	public static final String CONTENT_TYPE_JSON = "application/json";
+	public static final String CONTENT_TYPE_JSON = "application/json; charset=UTF-8";
 
 	private CLIENTEDAO dao = new CLIENTEDAO();
 

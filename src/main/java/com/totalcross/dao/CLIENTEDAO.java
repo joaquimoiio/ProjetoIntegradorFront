@@ -1,5 +1,6 @@
 package com.totalcross.dao;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -202,7 +203,8 @@ public class CLIENTEDAO {
 		return existe;
 	}
 
-	public void enviarDados(String url, Options options) throws SQLException, UnknownHostException, IOException {
+	public void enviarDados(String url, Options options)
+			throws SQLException, UnknownHostException, IOException, UnsupportedEncodingException {
 
 		ArrayList<Cliente> clientes = buscarNaoSincronizados();
 
@@ -229,7 +231,7 @@ public class CLIENTEDAO {
 				jsonCliente.put("cnpj", cnpjValue);
 			}
 
-			options.data = jsonCliente.toString();
+			options.data = new String(jsonCliente.toString().getBytes("UTF-8"), "UTF-8");
 			HttpStream http = new HttpStream(new URI(url), options);
 
 			System.out.println("enviado: " + jsonCliente.toString());
